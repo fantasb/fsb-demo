@@ -1,0 +1,5 @@
+--
+--
+--
+-- echo "drop database if exists fsb" | mysqlc; cat ./workspace/database_init.sql | mysqlc; (echo "use fsb;" && cat ./workspace/algo_schema.sql) | mysqlc;
+--
