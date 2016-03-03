@@ -1,7 +1,7 @@
 --
 -- See @todo items below
 --
--- drop table if exists work_history_item_roles,work_history_items,education_history_item_roles,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,role_skill_fundamentals,skills,candidate_roles,roles,candidates;
+-- drop table if exists work_history_item_roles,work_history_items,executives,education_history_item_roles,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,role_skill_fundamentals,skills,candidate_roles,roles,candidates;
 --
 
 create table candidates (
@@ -14,7 +14,7 @@ create table candidates (
 	,updated int not null
 
 	,primary key (id)
--- ,unique key pk () @todo
+-- ,unique key pk (name) -- @todo
 	,index name_ (name)
 	,index linkedin_profile_link_ (linkedin_profile_link)
 	,index visible_ (visible)
@@ -257,12 +257,29 @@ create table education_history_item_roles (
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
+create table executives (
+	id int unsigned not null
+	,name varchar(191) not null
+-- @todo: needs real primary key
+	,rank int unsigned default null
+	,created int not null
+	,updated int not null
+
+	,primary key (id)
+-- ,unique key pk (name) -- @todo
+	,index rank_ (rank)
+	,index created_ (created)
+	,index updated_ (updated)
+) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
+
 create table work_history_items (
 	id int unsigned auto_increment not null
 	,candidate_id int unsigned not null
 	,start_time int default null
 	,end_time int default null
 	,company_id int unsigned default null -- force a company?
+	,executive_id int unsigned default null -- force a boss?
 	,location_id int unsigned default null
 	,title varchar(128) not null
 	,description varchar(1024) not null default ''
@@ -273,6 +290,7 @@ create table work_history_items (
 	,unique key pk (candidate_id,start_time,end_time)
 	,foreign key candidate_id_fk (candidate_id) references candidates (id)
 	,foreign key company_id_fk (company_id) references companies (id)
+	,foreign key executive_id_fk (executive_id) references executives (id)
 	,foreign key location_id_fk (location_id) references locations (id)
 	,index start_time_ (start_time)
 	,index end_time_ (end_time)
