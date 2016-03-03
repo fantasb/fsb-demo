@@ -1,7 +1,7 @@
 --
 -- See @todo items below
 --
--- drop table if exists work_history_item_roles,work_history_items,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,skills,candidate_roles,roles,candidates;
+-- drop table if exists work_history_item_roles,work_history_items,education_history_item_roles,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,role_skill_fundamentals,skills,candidate_roles,roles,candidates;
 --
 
 create table candidates (
@@ -57,6 +57,21 @@ create table skills (
 	,unique key pk (name)
 	,index type_ (type)
 	,index created_ (created)
+) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
+
+create table role_skill_fundamentals (
+	role_id int unsigned not null
+	,skill_id int unsigned not null
+	,importance_level int unsigned not null default 0
+	,created int not null
+
+	,unique key pk (role_id,skill_id)
+	,foreign key role_id_fk (role_id) references roles (id)
+	,foreign key skill_id_fk (skill_id) references skills (id)
+	,index importance_level_ (importance_level)
+	,index created_ (created)
+	,index cq0 (role_id,importance_level)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
@@ -210,9 +225,8 @@ create table education_history_items (
 	,candidate_id int unsigned not null
 	,start_time int default null
 	,end_time int default null
-	,education_institution_id int unsigned default null -- force a company?
+	,education_institution_id int unsigned default null -- force a college/institution?
 	,degree_type_id int unsigned not null
-	,role_id int unsigned default null
 	,description varchar(1024) not null default ''
 	,created int not null
 	,updated int not null
@@ -222,13 +236,24 @@ create table education_history_items (
 	,foreign key candidate_id_fk (candidate_id) references candidates (id)
 	,foreign key education_institution_id_fk (education_institution_id) references education_institutions (id)
 	,foreign key degree_type_id_fk (degree_type_id) references degree_types (id)
-	,foreign key role_id_fk (role_id) references roles (id)
 	,index start_time_ (start_time)
 	,index end_time_ (end_time)
 	
 	,index created_ (created)
 	,index updated_ (updated)
 	,index cq0 (start_time,end_time)
+) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
+
+create table education_history_item_roles (
+	education_history_item_id int unsigned not null
+	,role_id int unsigned not null
+	,created int not null
+
+	,unique key pk (education_history_item_id,role_id)
+	,foreign key education_history_item_id_fk (education_history_item_id) references education_history_items (id)
+	,foreign key role_id_fk (role_id) references roles (id)
+	,index created_ (created)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
