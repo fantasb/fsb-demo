@@ -258,16 +258,16 @@ create table education_history_item_roles (
 
 
 create table executives (
-	id int unsigned not null
+	id int unsigned auto_increment not null
 	,name varchar(191) not null
 -- @todo: needs real primary key
-	,rank int unsigned default null
+	,rating int unsigned default null
 	,created int not null
 	,updated int not null
 
 	,primary key (id)
 -- ,unique key pk (name) -- @todo
-	,index rank_ (rank)
+	,index rating_ (rating)
 	,index created_ (created)
 	,index updated_ (updated)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;

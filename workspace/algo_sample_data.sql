@@ -1,7 +1,7 @@
 --
 --
 --
--- echo "drop database if exists fsb" | mysqlc; cat ./workspace/database_init.sql | mysqlc; (echo "use fsb;" && cat ./workspace/algo_schema.sql) | mysqlc;
+-- (echo "drop database if exists fsb;" && cat ./workspace/database_init.sql && echo "use fsb;" && cat ./workspace/algo_schema.sql && cat ./workspace/algo_sample_data.sql) | mysqlc
 --
 
 set @now = 1456905600;
@@ -133,34 +133,34 @@ insert into executives (name, rating, created, updated) values
 ('Hector Aguilar', 60, @now, @now),
 ('Oded Noy', 10, @now, @now),
 ('Werner Hans Peter Vogels', 100, @now, @now),
-('Kamil Mroczek', 50, @now, @now),
+('Kamil Mroczek', 50, @now, @now)
 ;
 
 
 insert into work_history_items (candidate_id, start_time, end_time, company_id, executive_id, location_id, title, created, updated) values
-(1, 1351728000, null, 1, null, 'iOS Developer', @now, @now), -- Esteban Uribe, Tinder
-(2, 1351728000, null, 2, null, 'App Developer', @now, @now), -- Michael Murray, Snapchat
-(3, 1351728000, null, 3, null, 'Lead App Engineer', @now, @now), -- Jamie Scanlon, Evite
-(4, 1351728000, null, 1, null, 'iOS Developer', @now, @now), -- Warren Dodge, Tinder
-(5, 1351728000, null, 4, null, 'iOS Developer', @now, @now), -- Jeremy Nelson, Wag! Labs
-(6, 1433116800, null, 5, null, 'iOS Developer', @now, @now), -- Robert Joynt, Okta, Inc.
-(7, 1433116800, null, 6, null, 'iOS Developer', @now, @now), -- Nathan Nakao, TSI VA
-(8, 1351728000, null, 7, null, 'iOS Developer', @now, @now), -- Yariv Nissim, TrueCar
-(9, 1351728000, null, 8, null, 'iOS Developer', @now, @now), -- Gustavo Halperin, Joya
-(10, 1433116800, null, 9, null, 'Lead iOS Developer', @now, @now), -- Steve Saxon, Amazon
-(11, 1433116800, null, 10, null, 'App Developer', @now, @now), -- Kamil Mroczek, Sense360
+(1, 1351728000, null, 1, 1, null, 'iOS Developer', @now, @now), -- Esteban Uribe, Tinder, Ryan Ogle
+(2, 1351728000, null, 2, 2, null, 'App Developer', @now, @now), -- Michael Murray, Snapchat, Bobby Murphy
+(3, 1351728000, null, 3, 3, null, 'Lead App Engineer', @now, @now), -- Jamie Scanlon, Evite, Perry Evoniuk
+(4, 1351728000, null, 1, 1, null, 'iOS Developer', @now, @now), -- Warren Dodge, Tinder, Ryan Ogle
+(5, 1351728000, null, 4, null, null, 'iOS Developer', @now, @now), -- Jeremy Nelson, Wag! Labs, ???
+(6, 1433116800, null, 5, 4, null, 'iOS Developer', @now, @now), -- Robert Joynt, Okta, Inc., Hector Aguilar
+(7, 1433116800, null, 6, null, null, 'iOS Developer', @now, @now), -- Nathan Nakao, TSI VA
+(8, 1351728000, null, 7, 5, null, 'iOS Developer', @now, @now), -- Yariv Nissim, TrueCar, Oded Noy
+(9, 1351728000, null, 8, null, null, 'iOS Developer', @now, @now), -- Gustavo Halperin, Joya
+(10, 1433116800, null, 9, 6, null, 'Lead iOS Developer', @now, @now), -- Steve Saxon, Amazon, Werner Hans Peter Vogels
+(11, 1433116800, null, 10, 7, null, 'App Developer', @now, @now), -- Kamil Mroczek, Sense360, Kamil Mroczek
 
-(1, 1325376000, 1351728000, 11, null, 'iOS Developer', @now, @now), -- Esteban Uribe, Cerrell Associates
-(2, 1325376000, 1351728000, 12, null, 'App Developer', @now, @now), -- Michael Murray, GonnaBe
-(3, 1325376000, 1351728000, 7, null, 'Lead App Engineer', @now, @now), -- Jamie Scanlon, TrueCar
-(4, 1325376000, 1351728000, 13, null, 'iOS Developer', @now, @now), -- Warren Dodge, Hey Daddio!
-(5, 1325376000, 1351728000, 14, null, 'iOS Developer', @now, @now), -- Jeremy Nelson, GameChanger Labs
-(6, 1420070400, 1433116800, 15, null, 'iOS Developer', @now, @now), -- Robert Joynt, Amgen
-(7, 1420070400, 1433116800, 16, null, 'iOS Developer', @now, @now), -- Nathan Nakao, US Renel Care
-(8, 1325376000, 1351728000, 17, null, 'iOS Developer', @now, @now), -- Yariv Nissim, The Omega Group, Inc.
-(9, 1325376000, 1351728000, 18, null, 'iOS Developer', @now, @now), -- Gustavo Halperin, Starmount
-(10, 1420070400, 1433116800, 19, null, 'Lead iOS Developer', @now, @now), -- Steve Saxon, Neudesic
-(11, 1420070400, 1433116800, 20, null, 'App Developer', @now, @now) -- Kamil Mroczek, Thinknear by Telenav
+(1, 1325376000, 1351728000, 11, null, null, 'iOS Developer', @now, @now), -- Esteban Uribe, Cerrell Associates
+(2, 1325376000, 1351728000, 12, null, null, 'App Developer', @now, @now), -- Michael Murray, GonnaBe
+(3, 1325376000, 1351728000, 7, null, null, 'Lead App Engineer', @now, @now), -- Jamie Scanlon, TrueCar
+(4, 1325376000, 1351728000, 13, null, null, 'iOS Developer', @now, @now), -- Warren Dodge, Hey Daddio!
+(5, 1325376000, 1351728000, 14, null, null, 'iOS Developer', @now, @now), -- Jeremy Nelson, GameChanger Labs
+(6, 1420070400, 1433116800, 15, null, null, 'iOS Developer', @now, @now), -- Robert Joynt, Amgen
+(7, 1420070400, 1433116800, 16, null, null, 'iOS Developer', @now, @now), -- Nathan Nakao, US Renel Care
+(8, 1325376000, 1351728000, 17, null, null, 'iOS Developer', @now, @now), -- Yariv Nissim, The Omega Group, Inc.
+(9, 1325376000, 1351728000, 18, null, null, 'iOS Developer', @now, @now), -- Gustavo Halperin, Starmount
+(10, 1420070400, 1433116800, 19, null, null, 'Lead iOS Developer', @now, @now), -- Steve Saxon, Neudesic
+(11, 1420070400, 1433116800, 20, null, null, 'App Developer', @now, @now) -- Kamil Mroczek, Thinknear by Telenav
 ;
 
 
