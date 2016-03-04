@@ -129,6 +129,7 @@ create table candidate_misc_role_facts (
 
 -- @todo: finish this
 -- consider UX use cases
+-- use google geocodes to fill lat/lng data?
 create table locations (
 	id int unsigned auto_increment not null -- bigint?
 	,latitude decimal(8,6) not null
@@ -139,6 +140,12 @@ create table locations (
 	,city varchar(128) default null
 
 	,primary key (id)
+	,index latitude_ (latitude)
+	,index longitude_ (longitude)
+	,index country_ (country)
+	,index state_ (state)
+	,county county_ (county)
+	,city_ (city)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
