@@ -34,6 +34,7 @@ module.exports = function(candidateId,cb){
 			;
 			roles.forEach(function(role){
 				console.log('Scoring candidate '+candidateId+' role '+role.name+'...');
+				rolesScores[role.name] = {};
 				var numFactorsScored = 0
 				factors.forEach(function(factor){
 					if (typeof Scoring[factor.name] != 'function') {
@@ -49,6 +50,7 @@ module.exports = function(candidateId,cb){
 								//console.log('SAVING SCORE ERROR',factor);
 								return fatalErr(err)
 							}
+							rolesScores[role.name][factor.name] = score.score;
 							console.log('candidateId',candidateId,'roleId',role.id,'factorId',factor.id,'\tscore: '+score.score,'\tdebug: '+score.debug.join('; '));
 							doneWithFactor()
 						})
@@ -62,7 +64,12 @@ module.exports = function(candidateId,cb){
 			})
 			function doneWithRole(){
 				if (++numRolesScored == roles.length) {
-					cb(false,rolesScores)
+					// in case user lost role...
+					removeScoresOutsideCandidateCurrentRoles(candidateId, roles, function(err,data){
+						if (err)
+							return cb(err)
+						cb(false,rolesScores)
+					})
 				}
 			}
 		})
@@ -122,6 +129,20 @@ function saveScore(candidateId, roleId, factorId, score, debug, cb){
 	});
 }
 
+function removeScoresOutsideCandidateCurrentRoles(candidateId, roles, cb){
+	var roleIds = []
+	roles.forEach(function(role){
+		roleIds.push(+role.id)
+	})
+
+	var con = db()
+		,q = 'delete from candidate_role_factor_scores where role_id not in ('+roleIds.join(',')+')'
+		,p = []
+	con.query(q,p,function(err,data){
+		cb(err,data);
+		con.end()
+	})
+}
 
 Scoring = {
 	//return process.nextTick(function(){ cb(false,{score:0,debug:[]}); });
@@ -146,8 +167,12 @@ Scoring = {
 			if (err) {
 				fatalErr(err);
 			} else {
-				score.score += 1;
-				score.debug.push('+1 for Fluent English');
+				if (data.length) {
+					score.score += 1;
+					score.debug.push('+1 for Fluent English');
+				} else {
+					score.debug.push('Does not speak Fluent English');
+				}
 				itemScored();
 			}
 			con.end();

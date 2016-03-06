@@ -1,5 +1,5 @@
 /*
-
+	Currently runs through all "visible" candidates and scores each
 */
 
 var argv = require('minimist')(process.argv.slice(2))
@@ -18,6 +18,7 @@ getAllCandidates(function(err,candidates){
 				return console.log('Failed to score candidate '+candidate.id, err);
 			}
 			console.log('Candidate '+candidate.id+' scored successfully');
+			//console.log(data);
 		});
 	});
 })

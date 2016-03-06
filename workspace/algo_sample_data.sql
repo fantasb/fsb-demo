@@ -46,7 +46,7 @@ insert into skills (name, type, display_name, visible, created) values
 ('fluent_spanish', 'language', 'Fluent Spanish', 1, @now),
 ('c++', null, 'C++', 1, @now),
 ('objective_c', null, 'Objective C', 1, @now),
-('swift', null, 'swift', 1, @now)
+('swift', null, 'Swift', 1, @now)
 ;
 
 
