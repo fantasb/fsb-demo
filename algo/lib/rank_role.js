@@ -87,7 +87,7 @@ function rankCandidates(factors){
 			if (!candidates_[factorScore.candidate_id]) {
 				candidates_[factorScore.candidate_id] = {
 					id: factorScore.candidate_id
-					,scores: {}
+					,scores: {} // @todo: comment this out for #performance
 					,totalScore: 0
 				}
 				candidates.push(candidates_[factorScore.candidate_id])
