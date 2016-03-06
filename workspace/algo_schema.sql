@@ -1,7 +1,7 @@
 --
 -- See @todo items below
 --
--- drop table if exists work_history_item_roles,work_history_items,executives,education_history_item_roles,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,role_skill_fundamentals,skills,candidate_roles,roles,candidates;
+-- drop table if exists candidate_role_factor_scores,algo_factors,work_history_item_roles,work_history_items,executives,education_history_item_roles,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,role_skill_fundamentals,skills,candidate_roles,roles,candidates;
 --
 
 create table candidates (
@@ -27,10 +27,12 @@ create table roles (
 	id int unsigned auto_increment not null
 	,name varchar(191) not null
 	,parent_role_id int unsigned default null -- fk?
+	,visible tinyint(1) not null default 0
 	,created int not null
 
 	,primary key (id)
 	,unique key pk (name)
+	,index visible_ (visible)
 	,index created_ (created)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
@@ -51,11 +53,15 @@ create table skills (
 	id int unsigned auto_increment not null
 	,name varchar(191) not null
 	,type varchar(64) default null
+	,display_name varchar(191) not null
+	,visible tinyint(1) not null default 0
 	,created int not null
 
 	,primary key (id)
 	,unique key pk (name)
 	,index type_ (type)
+	,index display_name_ (display_name)
+	,index visible_ (visible)
 	,index created_ (created)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
@@ -92,12 +98,14 @@ create table misc_role_facts (
 	,name varchar(191) not null
 	,display_name varchar(191) not null
 	,description varchar(512) not null default ''
+	,weight int unsigned not null default 0
 	,created int not null
 	,updated int not null
 
 	,primary key (id)
 	,unique key pk (name)
 	,index display_name_ (display_name)
+	,index weight_ (weight)
 	,index created_ (created)
 	,index updated_ (updated)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
@@ -144,8 +152,8 @@ create table locations (
 	,index longitude_ (longitude)
 	,index country_ (country)
 	,index state_ (state)
-	,county county_ (county)
-	,city_ (city)
+	,index county_ (county)
+	,index city_ (city)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
@@ -320,7 +328,47 @@ create table work_history_item_roles (
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
+-- BEGIN Scoring
 
+-- for v0, all factors will apply to all roles
+create table algo_factors (
+	id int unsigned auto_increment not null
+	,name varchar(191) not null
+	,display_name varchar(191) not null
+	,description varchar(512) not null default ''
+	,weight int not null default 0
+	,created int not null
+	,updated int not null
+
+	,primary key (id)
+	,unique key pk (name)
+	,index display_name_ (display_name)
+	,index weight_ (weight)
+	,index created_ (created)
+	,index updated_ (updated)
+) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
+
+create table candidate_role_factor_scores (
+	candidate_id int unsigned not null
+	,role_id int unsigned not null
+	,factor_id int unsigned not null
+	,score int unsigned not null
+	,debug text
+	,created int not null
+	,updated int not null
+
+	,unique key pk (candidate_id,role_id,factor_id)
+	,foreign key candidate_id_fk (candidate_id) references candidates (id)
+	,foreign key role_id_fk (role_id) references roles (id)
+	,foreign key factor_id_fk (role_id) references algo_factors (id)
+	,index score_ (score)
+	,index created_ (created)
+	,index updated_ (updated)
+	,index cq0 (role_id,score)
+) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
+-- END Scoring
 
 
 

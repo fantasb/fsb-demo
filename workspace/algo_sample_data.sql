@@ -21,8 +21,8 @@ insert into candidates (name, linkedin_profile_link, visible, created, updated) 
 ;
 
 
-insert into roles (name, parent_role_id, created) values
-('iOS Developer', null, @now)
+insert into roles (name, parent_role_id, visible, created) values
+('iOS Developer', null, 1, @now)
 ;
 
 
@@ -41,12 +41,12 @@ insert into candidate_roles (candidate_id, role_id, created) values
 ;
 
 
-insert into skills (name, type, created) values
-('Fluent English', 'language', @now),
-('Fluent Spanish', 'language', @now),
-('C++', null, @now),
-('Objective C', null, @now),
-('Swift', null, @now)
+insert into skills (name, type, display_name, visible, created) values
+('fluent_english', 'language', 'Fluent English', 1, @now),
+('fluent_spanish', 'language', 'Fluent Spanish', 1, @now),
+('c++', null, 'C++', 1, @now),
+('objective_c', null, 'Objective C', 1, @now),
+('swift', null, 'swift', 1, @now)
 ;
 
 
@@ -175,19 +175,34 @@ insert into work_history_item_roles (work_history_item_id, role_id, created) val
 (8, 1, @now),
 (9, 1, @now),
 (10, 1, @now),
-(11, 1, @now)
+(11, 1, @now),
+
+(12, 1, @now),
+(13, 1, @now),
+(14, 1, @now),
+(15, 1, @now),
+(16, 1, @now),
+(17, 1, @now),
+(18, 1, @now),
+(19, 1, @now),
+(20, 1, @now),
+(21, 1, @now),
+(22, 1, @now)
 ;
 
 
-insert into misc_role_facts (name, display_name, description, created, updated) values
-('worked_apps_volume_100k', 'High Volume Apps', 'Worked on iOS apps with over 100k MAU', @now, @now),
-('produced_content', 'Produced Content', '', @now, @now),
-('produced_content_leader', 'Produced Content - Leader', '', @now, @now)
+insert into misc_role_facts (name, display_name, description, weight, created, updated) values
+('worked_apps_volume_100k', 'High Volume Apps', 'Worked on iOS apps with over 100k MAU', 10, @now, @now),
+('produced_content', 'Produced Content', '', 1, @now, @now),
+('produced_content_leader', 'Produced Content - Leader', '', 2, @now, @now)
 ;
 
 
+-- apply all misc_role_facts to "iOS Developer" Role
 insert into misc_role_fact_roles (misc_role_fact_id, role_id, created) values
-(1, 1, @now)
+(1, 1, @now),
+(2, 1, @now),
+(3, 1, @now)
 ;
 
 
@@ -254,4 +269,17 @@ insert into education_history_item_roles (education_history_item_id, role_id, cr
 (10, 1, @now) -- Not 11 cuz we didnt add a college degree for Steven Saxon
 ;
 
+
+-- BEGIN Scoring
+
+insert into algo_factors (name,display_name,description,weight,created,updated) values
+('language_skills', 'Language Skills', '', 5, @now, @now),
+('role_skill_fundamentals', 'Role Skill Fundamentals', '', 10, @now, @now),
+('role_experience', 'Role Experience', '', 15, @now, @now),
+('misc_role_facts', 'Misc Role Facts', '', 10, @now, @now),
+('basic_education', 'Basic Education', '', 5, @now, @now),
+('role_education', 'Role Education', '', 5, @now, @now)
+;
+
+-- END Scoring
 

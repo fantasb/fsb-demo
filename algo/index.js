@@ -9,7 +9,9 @@
 var scoreCandidate = require('./lib/score_candidate.js')
 
 
-scoreCandidate(1);
+scoreCandidate(2,function(err,data){
+	console.log('index.js','err',err,'data',data);
+});
 
 
 
