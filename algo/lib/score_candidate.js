@@ -166,6 +166,7 @@ Scoring = {
 	,role_skill_fundamentals: function(candidateId, roleId, cb){
 		// +1 for each FundamentalSkill the Candidate has
 		//	not doing a percentage here, should be part of role algo
+		// @todo: discuss whether this should be an all-or-nothing score
 		var con = db()
 			,q = 'select * from role_skill_fundamentals rsf inner join skills s on rsf.skill_id=s.id and rsf.role_id=? and s.visible=1 left outer join candidate_skills cs on cs.skill_id=s.id and cs.candidate_id=?'
 			,p = [roleId, candidateId]
