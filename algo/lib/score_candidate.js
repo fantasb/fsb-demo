@@ -46,6 +46,7 @@ module.exports = function(candidateId,cb){
 						}
 						saveScore(candidateId,role.id,factor.id,score.score,score.debug,function(err,data){
 							if (err) {
+								//console.log('SAVING SCORE ERROR',factor);
 								return fatalErr(err)
 							}
 							console.log('candidateId',candidateId,'roleId',role.id,'factorId',factor.id,'\tscore: '+score.score,'\tdebug: '+score.debug.join('; '));
@@ -185,7 +186,7 @@ Scoring = {
 						return;
 					}
 					score.debug.push('Has skill fundamental: '+row.display_name);
-					++score.score;
+					score.score += 1;
 				});
 				//score.score = (score.score && data.length) ? score.score*100/data.length : 0;
 				cb(false,score);
@@ -309,7 +310,7 @@ Scoring = {
 		// currently only gives score if WorkHistoryItem is associated with Role
 		// @todo: discuss if some points should be given if worked at good Company even if not associated with Role
 		var con = db()
-			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join companies c on c.id=whi.company_id where whi.candidate_id=? and whi.end_time is null order by c.rating desc' // @todo: add limit 1 for performance
+			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join companies c on c.id=whi.company_id where whi.candidate_id=? and whi.end_time is null and c.rating is not null order by c.rating desc limit 1'
 			,p = [roleId, candidateId]
 			,score = {
 				score: 0
@@ -337,7 +338,7 @@ Scoring = {
 		// currently only gives score if WorkHistoryItem is associated with Role
 		// @todo: discuss if some points should be given if worked at good Company even if not associated with Role
 		var con = db()
-			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join companies c on c.id=whi.company_id where whi.candidate_id=? and whi.end_time is not null' // @todo: add limit 1 for performance
+			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join companies c on c.id=whi.company_id where whi.candidate_id=? and whi.end_time is not null and c.rating is not null'
 			,p = [roleId, candidateId]
 			,score = {
 				score: 0
@@ -363,7 +364,7 @@ Scoring = {
 		// @todo: discuss if points should be given for previous WorkHistoryItems
 		// @todo: discuss if points should be given if working for good Executive but not in queried Role
 		var con = db()
-			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join executives e on e.id=whi.executive_id where whi.candidate_id=? and whi.end_time is null order by e.rating desc' // @todo: add limit 1 for performance
+			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join executives e on e.id=whi.executive_id where whi.candidate_id=? and whi.end_time is null order by e.rating desc limit 1'
 			,p = [roleId, candidateId]
 			,score = {
 				score: 0
@@ -390,7 +391,7 @@ Scoring = {
 		// +1 for each venture-funded WorkHistoryItem
 		// Gives points regardless of role
 		var con = db()
-			,q = 'select * from work_history_items whi inner join companies c on whi.company_id=c.id where whi.candidate_id=? and c.venture_funded=1 group by c.id' // @todo: add limit 1 for performance
+			,q = 'select * from work_history_items whi inner join companies c on whi.company_id=c.id where whi.candidate_id=? and c.venture_funded=1 group by c.id'
 			,p = [candidateId]
 			,score = {
 				score: 0
