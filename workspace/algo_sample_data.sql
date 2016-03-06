@@ -278,7 +278,12 @@ insert into algo_factors (name,display_name,description,weight,created,updated) 
 ('role_experience', 'Role Experience', '', 15, @now, @now),
 ('misc_role_facts', 'Misc Role Facts', '', 10, @now, @now),
 ('basic_education', 'Basic Education', '', 5, @now, @now),
-('role_education', 'Role Education', '', 5, @now, @now)
+('role_education', 'Role Education', '', 5, @now, @now),
+('current_company', 'Current Company', '', 5, @now, @now),
+('previous_companies', 'Previous Companies', '', 5, @now, @now),
+('executives', 'Current Executive', '', 15, @now, @now),
+('venture_funded', 'Venture-Funded Experience', '', 10, @now, @now),
+('misc_company_facts', 'Misc Company Facts', '', 5, @now, @now)
 ;
 
 -- END Scoring

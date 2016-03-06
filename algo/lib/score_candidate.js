@@ -6,6 +6,14 @@
 
 #dynamic - Potential innaccuracies due to dynamic value(s) in factor
 
+@todo
+	- Review each method in "Scoring" with team
+	- Review each other "@todo" with team
+	- Review each query and respect .visibles for
+		- Roles
+		- Skills
+		- Candidates (probly not necessary here)
+
 500,000,000 candidates * 10 roles-per-candidate * (size of score data ~= 4b[candidate_id]+4b[role_id]+4b[score])
 */
 
@@ -174,7 +182,7 @@ Scoring = {
 						score.debug.push('Missing skill fundamental: '+row.name);
 						return;
 					}
-					score.debug.push('Has skill fundamental: '+row.name);
+					score.debug.push('Has skill fundamental: '+row.display_name);
 					++score.score;
 				});
 				score.score = (score.score && data.length) ? score.score*100/data.length : 0;
@@ -288,6 +296,137 @@ Scoring = {
 			} else {
 				score.score = data.length
 				score.debug.push(data.length+' education items associated with role')
+				cb(false,score);
+			}
+			con.end()
+		})
+	}
+
+	,current_company: function(candidateId, roleId, cb){
+		// points for currently working at high-rated company
+		// currently only gives score if WorkHistoryItem is associated with Role
+		// @todo: discuss if some points should be given if worked at good Company even if not associated with Role
+		var con = db()
+			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join companies c on c.id=whi.company_id where whi.candidate_id=? and whi.end_time is null order by c.rating desc' // @todo: add limit 1 for performance
+			,p = [roleId, candidateId]
+			,score = {
+				score: 0
+				,debug: []
+			}
+		;
+		con.query(q,p,function(err,data){
+			if (err) {
+				cb(err);
+			} else {
+				if (data.length) {
+					score.score = data[0].rating;
+					score.debug.push('+'+data[0].rating+' for currently working at '+data[0].name)
+				} else {
+					score.debug.push('Current WorkHistoryItem not associated with Role or valued Company')
+				}
+				cb(false,score);
+			}
+			con.end()
+		})
+	}
+
+	,previous_companies: function(candidateId, roleId, cb){
+		// points for previously working at high-rated companies
+		// currently only gives score if WorkHistoryItem is associated with Role
+		// @todo: discuss if some points should be given if worked at good Company even if not associated with Role
+		var con = db()
+			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join companies c on c.id=whi.company_id where whi.candidate_id=? and whi.end_time is not null' // @todo: add limit 1 for performance
+			,p = [roleId, candidateId]
+			,score = {
+				score: 0
+				,debug: []
+			}
+		;
+		con.query(q,p,function(err,data){
+			if (err) {
+				cb(err);
+			} else {
+				data.forEach(function(row){
+					score.score = row.rating;
+					score.debug.push('+'+row.rating+' for previously working at '+row.name)
+				})
+				cb(false,score);
+			}
+			con.end()
+		})
+	}
+
+	,executives: function(candidateId, roleId, cb){
+		// points for currently working for high-rated Executive
+		// @todo: discuss if points should be given for previous WorkHistoryItems
+		// @todo: discuss if points should be given if working for good Executive but not in queried Role
+		var con = db()
+			,q = 'select * from work_history_items whi inner join work_history_item_roles whir on whi.id=whir.work_history_item_id and whir.role_id=? inner join executives e on e.id=whi.executive_id where whi.candidate_id=? and whi.end_time is null order by e.rating desc' // @todo: add limit 1 for performance
+			,p = [roleId, candidateId]
+			,score = {
+				score: 0
+				,debug: []
+			}
+		;
+		con.query(q,p,function(err,data){
+			if (err) {
+				cb(err);
+			} else {
+				if (data.length) {
+					score.score = data[0].rating;
+					score.debug.push('+'+data[0].rating+' for currently working for '+data[0].name)
+				} else {
+					score.debug.push('Current WorkHistoryItem not associated with Role or valued Executive')
+				}
+				cb(false,score);
+			}
+			con.end()
+		})
+	}
+
+	,venture_funded: function(candidateId, roleId, cb){
+		// +1 for each venture-funded WorkHistoryItem
+		// Gives points regardless of role
+		var con = db()
+			,q = 'select * from work_history_items whi inner join companies c on whi.company_id=c.id where whi.candidate_id=? and c.venture_funded=1 group by c.id' // @todo: add limit 1 for performance
+			,p = [candidateId]
+			,score = {
+				score: 0
+				,debug: []
+			}
+		;
+		con.query(q,p,function(err,data){
+			if (err) {
+				cb(err);
+			} else {
+				data.forEach(function(row){
+					score.score += 1
+					score.debug.push('+1 for having worked at venture-funded '+row.name)
+				})
+				cb(false,score);
+			}
+			con.end()
+		})
+	}
+
+	,misc_company_facts: function(candidateId, roleId, cb){
+		// +1 for each WorkHistoryItem.company's MiscCompanyFact
+		var con = db()
+			,q = 'select * from work_history_items whi inner join misc_company_fact_companies mcfc on whi.company_id=mcfc.company_id inner join misc_company_facts mcf on mcfc.misc_company_fact_id=mcf.id where whi.candidate_id=?'
+			,p = [candidateId]
+			,score = {
+				score: 0
+				,debug: []
+			}
+		;
+		con.query(q,p,function(err,data){
+			if (err) {
+				cb(err);
+			} else {
+				data.forEach(function(row){
+					score.score += 1
+					score.debug.push('+1 for working at a company associated with '+row.display_name)
+				})
 				cb(false,score);
 			}
 			con.end()
