@@ -142,14 +142,16 @@ Algo = {
 			+ '</tr>');
 			z.$.results.append($row);
 			ace.req('candidate',{id:result.id},function(err,data){
-				var $dataRows = $row.find('.'+x+'-result-col-name,.'+x+'-result-col-description')
-					.removeClass(x+'-busy');
-				if (err) {
-					$dataRows.html(':(');
-					return console.log('ERROR','fetching candidate',result.id,err)
-				}
-				$dataRows.filter('.'+x+'-result-col-name').html(data.name);
-				$dataRows.filter('.'+x+'-result-col-description').html(data.work_history_items[0]?data.work_history_items[0].description:'N/A');
+				setTimeout(function(){
+					var $dataRows = $row.find('.'+x+'-result-col-name,.'+x+'-result-col-description')
+						.removeClass(x+'-busy');
+					if (err) {
+						$dataRows.html(':(');
+						return console.log('ERROR','fetching candidate',result.id,err)
+					}
+					$dataRows.filter('.'+x+'-result-col-name').html(data.name);
+					$dataRows.filter('.'+x+'-result-col-description').html(data.work_history_items[0]?data.work_history_items[0].description:'N/A');
+				},700);
 			})
 		})
 	}
