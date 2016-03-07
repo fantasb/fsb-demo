@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Fantass-B</title>
+<link rel="stylesheet" type="text/css" href="/reset.css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<style type="text/css">
+body {
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	padding: 2em 3em;
+}
+.Algo {
+}
+.Algo-title {
+	font-size: 20px;
+	/*font-weight: bold;*/
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	text-align: center;
+	margin-bottom: 1em;
+}
+.Algo-filters {
+	margin-bottom: 1em;
+}
+.Algo-filter {
+}
+.Algo-results {
+}
+.Algo-results-header {
+	text-align: left;
+	font-weight: bold;
+}
+.Algo-result {
+}
+.Algo-result-col {
+	padding: 1em;
+}
+.Algo-result-col.Algo-busy {
+	background: url(/loader02.gif) no-repeat center center;
+}
+.Algo-result-col-place {width:10%;}
+.Algo-result-col-score {}
+.Algo-result-col-id {}
+.Algo-result-col-name {width:20%;}
+.Algo-result-col-description {}
+.Algo-result-col-actions {}
+.Algo-result-col-place {
+	font-weight: bold;
+}
+.Algo-result-col-action {
+}
+</style>
+<script>
+
+Algo = {
+	config: {
+		key: 'Algo'
+		,defaults: {
+			title: 'Fantass-B Algo Demo'
+		}
+	}
+	,$: {}
+	,init: function($cont,opts){
+		var z = this
+		if (z.inited)
+			return false;
+		z.inited = true;
+
+		z.opts = $.extend({},z.config.defaults,opts);
+
+		z.build();
+		$cont.html(z.$.cont);
+		z.functionalize();
+	}
+	,build: function(){
+		var z = this, x = z.config.key
+		z.$.cont = $('<div class="'+x+'">'
+			+ (z.opts.title ? '<div class="'+x+'-title">'+z.opts.title+'</div>' : '')
+			+ '<div class="'+x+'-filters">'
+				+ '<select class="'+x+'-filter '+x+'-filter-role">'
+					+ '<option value="">Select a Role...</option>'
+					+ '<option value="1">iOS Developer</option>'
+					+ '<option value="2">Recruiter</option>'
+					+ '<option value="3">Rumpus Rumbler (Exotic Dancer)</option>'
+				+ '</select>'
+			+ '</div>'
+			+ '<table class="'+x+'-results"><thead></thead><tbody></tbody></table>'
+		+ '</div>');
+		z.$.filters = z.$.cont.find('div.'+x+'-filters');
+		z.$.filterRole = z.$.filters.find('select.'+x+'-filter-role');
+		z.$.resultsHead = z.$.cont.find('table.'+x+'-results thead');
+		z.$.results = z.$.cont.find('table.'+x+'-results tbody');
+	}
+	,functionalize: function(){
+		var z = this, x = z.config.key
+
+		z.$.filterRole.bind('change',function(e){
+			var roleId = z.$.filterRole.val()
+			if (!roleId) {
+				return z.paintResults(null);
+			}
+			ace.req('results',{role_id:roleId},function(err,data){
+				if (!err && !(data && Array.isArray(data.candidates)))
+					err = {error:'unexpected response from api'};
+				if (err) {
+					alert('ERROR: '+(err&&err.error?err.error:'unknown error'));
+					return console.log('ERROR',err);
+				}
+				z.paintResults(data.candidates);
+			});
+		});
+
+		z.$.results.on('click','a.'+x+'-action',function(e){
+			e.preventDefault();
+		});
+	}
+	,paintResults: function(results){
+		var z = this, x = z.config.key
+		z.$.resultsHead.empty();
+		z.$.results.empty();
+		if (!results)
+			return;
+		z.$.resultsHead.html('<tr class="'+x+'-results-header">'
+			+ '<th class="'+x+'-result-col '+x+'-result-col-place">&nbsp;</th>'
+			+ '<th class="'+x+'-result-col '+x+'-result-col-score">Score</th>'
+			//+ '<th class="'+x+'-result-col '+x+'-result-col-id">ID</th>'
+			+ '<th class="'+x+'-result-col '+x+'-result-col-name">Name</th>'
+			+ '<th class="'+x+'-result-col '+x+'-result-col-description">Description</th>'
+			+ '<th class="'+x+'-result-col '+x+'-result-col-actions">&nbsp;</th>'
+		+ '</tr>');
+		$.each(results,function(i,result){
+			var $row = $('<tr class="'+x+'-result '+x+'-result-id-'+result.id+'">'
+				+ '<td class="'+x+'-result-col '+x+'-result-col-place">'+(i+1)+'</td>'
+				+ '<td class="'+x+'-result-col '+x+'-result-col-score">'+result.totalScore.toFixed(2)+'</td>'
+				//+ '<td class="'+x+'-result-col '+x+'-result-col-id">'+result.id+'</td>'
+				+ '<td class="'+x+'-result-col '+x+'-result-col-name '+x+'-busy"></td>'
+				+ '<td class="'+x+'-result-col '+x+'-result-col-description '+x+'-busy"></td>'
+				+ '<td class="'+x+'-result-col '+x+'-result-col-actions"><a class="'+x+'-action" href="#">Claim Profile</a></td>'
+			+ '</tr>');
+			z.$.results.append($row);
+			ace.req('candidate',{id:result.id},function(err,data){
+				var $dataRows = $row.find('.'+x+'-result-col-name,.'+x+'-result-col-description')
+					.removeClass(x+'-busy');
+				if (err) {
+					$dataRows.html(':(');
+					return console.log('ERROR','fetching candidate',result.id,err)
+				}
+				$dataRows.filter('.'+x+'-result-col-name').html(data.name);
+				$dataRows.filter('.'+x+'-result-col-description').html(data.work_history_items[0]?data.work_history_items[0].description:'N/A');
+			})
+		})
+	}
+}
+
+if (!window.ace) {
+	window.ace = {};
+	ace.req = function(/* method must come after url */){
+		var z = ace.req, method = 'get'
+			,url,data,opts,showLoader,cb,i
+		for (i=0;i<arguments.length;++i) {
+			switch (typeof arguments[i]) {
+				case 'string': url ? method = arguments[i] : url = arguments[i]; break;
+				case 'object': data ? opts = arguments[i] : data = arguments[i]; break;
+				case 'function': cb = arguments[i]; break;
+				case 'boolean': showLoader = arguments[i]; break;
+			}
+		}
+		url = z.config.apiPrefix + (url[0] == '/' ? url.substr(1) : url);
+		showLoader && ace.loader.up();
+		$.ajax({
+			url: url
+			,data: data
+			,method: method
+			,dataType: 'json'
+			,complete: function(res){
+				var undef;
+				showLoader && ace.loader.down();
+				// BEGIN handle jquery not returning responseJSON (wrong content-type or not an object)
+				if (res && !res.responseJSON && res.responseText) {
+					try {
+						res.responseJSON = JSON.parse(res.responseText);
+					} catch (e){}
+				}
+				// END handle jquery not returning responseJSON (wrong content-type or not an object)
+				if (!(res && res.responseJSON))
+					return cb({error:'unexpected response from api', code:0});
+				if (res.responseJSON.code !== undef || res.responseJSON.error !== undef) {
+					if (!res.responseJSON.code)
+						res.responseJSON.code = -1;
+					if (typeof res.responseJSON.error == 'object')
+						res.responseJSON.error = JSON.stringify(res.responseJSON.error);
+					return cb(res.responseJSON);
+				}
+				cb(false, res.responseJSON);
+			}
+		});
+	};
+	ace.req.config = {
+		apiPrefix: '/api/'
+	};
+}
+
+$(function(){
+	Algo.init($('#results-demo'));
+});
+
+</script>
+
+</head>
+<body>
+
+
+<div id="results-demo"></div>
+
+
+</body>
+</html>

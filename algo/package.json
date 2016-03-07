@@ -6,7 +6,8 @@
 	"dependencies": {
 		"minimist": "1.1.1",
 		"sext": "0.1.6",
-		"mysql": "2.10.2"
+		"mysql": "2.10.2",
+		"express": "4.13.4"
 	},
 	"devDependencies": {
 		"tape": "~4.0.0"

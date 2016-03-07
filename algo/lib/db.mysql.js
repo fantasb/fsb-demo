@@ -21,8 +21,10 @@ module.exports = function(){
 		_end = db.end;
 		db.end = function(){
 			//console.log('db.end()',numOpen);
-			if (--numOpen == 0)
+			if (--numOpen == 0) {
 				_end.apply(db,arguments);
+				db = null;
+			}
 		}
 
 		// convenience...

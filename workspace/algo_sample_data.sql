@@ -137,30 +137,30 @@ insert into executives (name, rating, created, updated) values
 ;
 
 
-insert into work_history_items (candidate_id, start_time, end_time, company_id, executive_id, location_id, title, created, updated) values
-(1, 1351728000, null, 1, 1, null, 'iOS Developer', @now, @now), -- Esteban Uribe, Tinder, Ryan Ogle
-(2, 1351728000, null, 2, 2, null, 'App Developer', @now, @now), -- Michael Murray, Snapchat, Bobby Murphy
-(3, 1351728000, null, 3, 3, null, 'Lead App Engineer', @now, @now), -- Jamie Scanlon, Evite, Perry Evoniuk
-(4, 1351728000, null, 1, 1, null, 'iOS Developer', @now, @now), -- Warren Dodge, Tinder, Ryan Ogle
-(5, 1351728000, null, 4, null, null, 'iOS Developer', @now, @now), -- Jeremy Nelson, Wag! Labs, ???
-(6, 1433116800, null, 5, 4, null, 'iOS Developer', @now, @now), -- Robert Joynt, Okta, Inc., Hector Aguilar
-(7, 1433116800, null, 6, null, null, 'iOS Developer', @now, @now), -- Nathan Nakao, TSI VA
-(8, 1351728000, null, 7, 5, null, 'iOS Developer', @now, @now), -- Yariv Nissim, TrueCar, Oded Noy
-(9, 1351728000, null, 8, null, null, 'iOS Developer', @now, @now), -- Gustavo Halperin, Joya
-(10, 1433116800, null, 9, 6, null, 'Lead iOS Developer', @now, @now), -- Steve Saxon, Amazon, Werner Hans Peter Vogels
-(11, 1433116800, null, 10, 7, null, 'App Developer', @now, @now), -- Kamil Mroczek, Sense360, Kamil Mroczek
+insert into work_history_items (candidate_id, start_time, end_time, company_id, executive_id, location_id, title, description, created, updated) values
+(1, 1351728000, null, 1, 1, null, 'iOS Developer', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nulla ipsum, aliquet sit amet sapien a, mattis placerat leo. Vestibulum accumsan urna sed dui dictum, ut feugiat leo vulputate. Sed et condimentum tellus, quis tincidunt urna. Duis scelerisque non sapien eget malesuada.', @now, @now), -- Esteban Uribe, Tinder, Ryan Ogle
+(2, 1351728000, null, 2, 2, null, 'App Developer', 'Praesent dignissim urna sapien, nec semper leo ultrices in. Duis interdum nisi nec nunc ultricies pretium.', @now, @now), -- Michael Murray, Snapchat, Bobby Murphy
+(3, 1351728000, null, 3, 3, null, 'Lead App Engineer', 'Ut dictum orci nec nulla pharetra, eu porta velit varius. Sed auctor mauris lorem, eu lacinia lectus eleifend ut.', @now, @now), -- Jamie Scanlon, Evite, Perry Evoniuk
+(4, 1351728000, null, 1, 1, null, 'iOS Developer', 'Mauris odio urna, sodales sit amet mauris ut, blandit tincidunt enim. Duis sit amet lacus vitae dolor commodo rutrum eleifend porttitor est. Morbi sed vulputate sapien.', @now, @now), -- Warren Dodge, Tinder, Ryan Ogle
+(5, 1351728000, null, 4, null, null, 'iOS Developer', 'Sed luctus urna augue, ut condimentum leo elementum ac. Cras sagittis nibh tempor accumsan tempus. Maecenas aliquet auctor risus nec fringilla. Duis at mi massa. Nullam sed arcu neque.', @now, @now), -- Jeremy Nelson, Wag! Labs, ???
+(6, 1433116800, null, 5, 4, null, 'iOS Developer', 'Ut tristique turpis ipsum, eu viverra diam imperdiet eget. Cras nec ultrices magna. Vivamus sed massa nec risus viverra egestas. Nunc posuere lorem et malesuada sodales.', @now, @now), -- Robert Joynt, Okta, Inc., Hector Aguilar
+(7, 1433116800, null, 6, null, null, 'iOS Developer', 'Sed auctor ac quam sed molestie. Duis suscipit ligula sed volutpat hendrerit. Aliquam sodales erat eget volutpat tincidunt. Donec scelerisque odio et congue placerat.', @now, @now), -- Nathan Nakao, TSI VA
+(8, 1351728000, null, 7, 5, null, 'iOS Developer', 'Praesent hendrerit, ipsum sit amet malesuada lobortis, ante est volutpat velit, vel tempor orci erat non tellus. Nam nec nunc nec leo imperdiet auctor. Vestibulum quis molestie eros, vitae luctus augue.', @now, @now), -- Yariv Nissim, TrueCar, Oded Noy
+(9, 1351728000, null, 8, null, null, 'iOS Developer', 'Maecenas luctus rutrum dui, eget pulvinar dolor faucibus et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec hendrerit augue nibh, nec vestibulum elit tristique et. Aliquam ut aliquam mauris.', @now, @now), -- Gustavo Halperin, Joya
+(10, 1433116800, null, 9, 6, null, 'Lead iOS Developer', 'Pellentesque ultrices ex in posuere pretium.', @now, @now), -- Steve Saxon, Amazon, Werner Hans Peter Vogels
+(11, 1433116800, null, 10, 7, null, 'App Developer', 'Pellentesque at rhoncus nibh, id vulputate libero. Etiam vitae dapibus ligula, pretium suscipit purus.', @now, @now), -- Kamil Mroczek, Sense360, Kamil Mroczek
 
-(1, 1325376000, 1351728000, 11, null, null, 'iOS Developer', @now, @now), -- Esteban Uribe, Cerrell Associates
-(2, 1325376000, 1351728000, 12, null, null, 'App Developer', @now, @now), -- Michael Murray, GonnaBe
-(3, 1325376000, 1351728000, 7, null, null, 'Lead App Engineer', @now, @now), -- Jamie Scanlon, TrueCar
-(4, 1325376000, 1351728000, 13, null, null, 'iOS Developer', @now, @now), -- Warren Dodge, Hey Daddio!
-(5, 1325376000, 1351728000, 14, null, null, 'iOS Developer', @now, @now), -- Jeremy Nelson, GameChanger Labs
-(6, 1420070400, 1433116800, 15, null, null, 'iOS Developer', @now, @now), -- Robert Joynt, Amgen
-(7, 1420070400, 1433116800, 16, null, null, 'iOS Developer', @now, @now), -- Nathan Nakao, US Renel Care
-(8, 1325376000, 1351728000, 17, null, null, 'iOS Developer', @now, @now), -- Yariv Nissim, The Omega Group, Inc.
-(9, 1325376000, 1351728000, 18, null, null, 'iOS Developer', @now, @now), -- Gustavo Halperin, Starmount
-(10, 1420070400, 1433116800, 19, null, null, 'Lead iOS Developer', @now, @now), -- Steve Saxon, Neudesic
-(11, 1420070400, 1433116800, 20, null, null, 'App Developer', @now, @now) -- Kamil Mroczek, Thinknear by Telenav
+(1, 1325376000, 1351728000, 11, null, null, 'iOS Developer', '', @now, @now), -- Esteban Uribe, Cerrell Associates
+(2, 1325376000, 1351728000, 12, null, null, 'App Developer', '', @now, @now), -- Michael Murray, GonnaBe
+(3, 1325376000, 1351728000, 7, null, null, 'Lead App Engineer', '', @now, @now), -- Jamie Scanlon, TrueCar
+(4, 1325376000, 1351728000, 13, null, null, 'iOS Developer', '', @now, @now), -- Warren Dodge, Hey Daddio!
+(5, 1325376000, 1351728000, 14, null, null, 'iOS Developer', '', @now, @now), -- Jeremy Nelson, GameChanger Labs
+(6, 1420070400, 1433116800, 15, null, null, 'iOS Developer', '', @now, @now), -- Robert Joynt, Amgen
+(7, 1420070400, 1433116800, 16, null, null, 'iOS Developer', '', @now, @now), -- Nathan Nakao, US Renel Care
+(8, 1325376000, 1351728000, 17, null, null, 'iOS Developer', '', @now, @now), -- Yariv Nissim, The Omega Group, Inc.
+(9, 1325376000, 1351728000, 18, null, null, 'iOS Developer', '', @now, @now), -- Gustavo Halperin, Starmount
+(10, 1420070400, 1433116800, 19, null, null, 'Lead iOS Developer', '', @now, @now), -- Steve Saxon, Neudesic
+(11, 1420070400, 1433116800, 20, null, null, 'App Developer', '', @now, @now) -- Kamil Mroczek, Thinknear by Telenav
 ;
 
 
