@@ -6,18 +6,18 @@
 
 set @now = 1456905600;
 
-insert into candidates (name, linkedin_profile_link, visible, created, updated) values
-('Esteban Uribe', 'https://www.linkedin.com/in/estebanuribe', 1, @now, @now),
-('Michael Murray', 'https://www.linkedin.com/in/mikebrianmurray', 1, @now, @now),
-('Jamie Scanlon', 'https://www.linkedin.com/in/jamiescanlon', 1, @now, @now),
-('Warren Dodge', 'https://www.linkedin.com/in/wdodge', 1, @now, @now),
-('Jeremy Nelson', 'https://www.linkedin.com/in/jlnelson19', 1, @now, @now),
-('Robert Joynt', 'https://www.linkedin.com/in/rjoynt', 1, @now, @now),
-('Nathan Nakao', 'https://www.linkedin.com/in/nathannakao', 1, @now, @now),
-('Yariv Nissim', 'https://www.linkedin.com/in/yarivnis', 1, @now, @now),
-('Gustavo Halperin', 'https://www.linkedin.com/in/gustavohalperin', 1, @now, @now),
-('Steve Saxon', 'https://www.linkedin.com/in/xmlguy', 1, @now, @now),
-('Kamil Mroczek', 'https://www.linkedin.com/in/kamilmroczek', 1, @now, @now)
+insert into candidates (name, linkedin_profile_id, visible, created, updated) values
+('Esteban Uribe', 'estebanuribe', 1, @now, @now),
+('Michael Murray', 'mikebrianmurray', 1, @now, @now),
+('Jamie Scanlon', 'jamiescanlon', 1, @now, @now),
+('Warren Dodge', 'wdodge', 1, @now, @now),
+('Jeremy Nelson', 'jlnelson19', 1, @now, @now),
+('Robert Joynt', 'rjoynt', 1, @now, @now),
+('Nathan Nakao', 'nathannakao', 1, @now, @now),
+('Yariv Nissim', 'yarivnis', 1, @now, @now),
+('Gustavo Halperin', 'gustavohalperin', 1, @now, @now),
+('Steve Saxon', 'xmlguy', 1, @now, @now),
+('Kamil Mroczek', 'kamilmroczek', 1, @now, @now)
 ;
 
 
@@ -125,15 +125,15 @@ insert into misc_company_fact_companies (misc_company_fact_id, company_id, creat
 ;
 
 
-insert into executives (name, rating, created, updated) values
-('Ryan Ogle', 50, @now, @now),
-('Bobby Murphy', 30, @now, @now),
-('Perry Evoniuk', 20, @now, @now),
-('Ryan Ogle', 60, @now, @now),
-('Hector Aguilar', 60, @now, @now),
-('Oded Noy', 10, @now, @now),
-('Werner Hans Peter Vogels', 100, @now, @now),
-('Kamil Mroczek', 50, @now, @now)
+insert into executives (name, linkedin_profile_id, rating, created, updated) values
+('Ryan Ogle', 'rogle', 50, @now, @now),
+('Bobby Murphy', 'burphy', 30, @now, @now),
+('Perry Evoniuk', 'pevno', 20, @now, @now),
+('Ryan Ogle', 'rogle22', 60, @now, @now),
+('Hector Aguilar', 'haguilar', 60, @now, @now),
+('Oded Noy', 'odednoy', 10, @now, @now),
+('Werner Hans Peter Vogels', 'hansvogels', 100, @now, @now),
+('Kamil Mroczek', 'kamercek', 50, @now, @now)
 ;
 
 

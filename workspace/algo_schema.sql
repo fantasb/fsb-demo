@@ -4,19 +4,19 @@
 -- drop table if exists candidate_role_factor_scores,algo_factors,work_history_item_roles,work_history_items,executives,education_history_item_roles,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,role_skill_fundamentals,skills,candidate_roles,roles,candidates;
 --
 
+-- Note: linkedin_profile_id currently being used as primary key
+-- @todo: Needs rethinking; what if they don't have linkedin profile?
 create table candidates (
 	id int unsigned auto_increment not null
--- @todo: needs real primary key
 	,name varchar(191) not null
-	,linkedin_profile_link varchar(191) default null
+	,linkedin_profile_id varchar(191) default null
 	,visible tinyint(1) not null default 0
 	,created int not null
 	,updated int not null
 
 	,primary key (id)
--- ,unique key pk (name) -- @todo
+	,unique key pk (linkedin_profile_id)
 	,index name_ (name)
-	,index linkedin_profile_link_ (linkedin_profile_link)
 	,index visible_ (visible)
 	,index created_ (created)
 	,index updated_ (updated)
@@ -272,16 +272,19 @@ create table education_history_item_roles (
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
+-- Note: linkedin_profile_id currently being used as primary key
+-- @todo: Needs rethinking; what if they don't have linkedin profile?
 create table executives (
 	id int unsigned auto_increment not null
 	,name varchar(191) not null
--- @todo: needs real primary key
+	,linkedin_profile_id varchar(191) not null
 	,rating int unsigned default null
 	,created int not null
 	,updated int not null
 
 	,primary key (id)
--- ,unique key pk (name) -- @todo
+	,unique key pk (linkedin_profile_id)
+	,index name_ (name)
 	,index rating_ (rating)
 	,index created_ (created)
 	,index updated_ (updated)
