@@ -24,6 +24,8 @@ insert into candidates (name, linkedin_profile_id, linkedin_img_url, visible, cr
 
 insert into roles (name, display_name, parent_role_id, visible, created) values
 ('ios-developer', 'iOS Developer', null, 1, @now)
+,('recruiter', 'Recruiter', null, 1, @now)
+,('exotic-dancer', 'Exotic Dancer', null, 1, @now)
 ;
 
 
