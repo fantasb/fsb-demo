@@ -12,6 +12,7 @@ module.exports = function(roleName,cb){
 		,q = 'select * from roles where name=?'
 		,p = [roleName]
 	;
+
 	con.query(q,p,function(err,data){
 		con.end();
 		if (err) {
