@@ -27,12 +27,14 @@ create table candidates (
 create table roles (
 	id int unsigned auto_increment not null
 	,name varchar(191) not null
+	,display_name varchar(191) not null
 	,parent_role_id int unsigned default null -- fk?
 	,visible tinyint(1) not null default 0
 	,created int not null
 
 	,primary key (id)
 	,unique key pk (name)
+	,index display_name_ (display_name)
 	,index visible_ (visible)
 	,index created_ (created)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;

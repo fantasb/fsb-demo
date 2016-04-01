@@ -10,6 +10,7 @@ var express = require('express')
 ,config = require('./config.js')
 ,rankRole = require('./lib/rank_role.js')
 ,getCandidate = require('./lib/get_candidate.js')
+,getRole = require('./lib/get_role.js')
 ;
 
 
@@ -19,51 +20,51 @@ app.get('/',function(req,res){
 	res.redirect('/algo.html');
 });
 
-app.get('/api/results',function(req,res){
-	var qs = Url.parse(req.url,true).query;
-	
-	if (!qs.role_id) {
-		return error(101,'Missing Input');
-	}
-	rankRole(qs.role_id,function(err,data){
-		if (err) {
-			return error(110,err);
+app.get('/api/*',function(req,res){
+	var url = Url.parse(req.url,true)
+		,qs = url.query
+		,path = url.pathname.replace('/api/','')
+	;
+
+	if (path == 'results') {
+		if (!qs.role_id) {
+			return error(101,'Missing Input');
 		}
-		mergeCandidateData(data,function(err,data){
+		rankRole(qs.role_id,function(err,data){
 			if (err) {
-				return error(111,err);
+				return error(110,err);
 			}
-			success({candidates:data});
+			mergeCandidateData(data,function(err,data){
+				if (err) {
+					return error(111,err);
+				}
+				success({candidates:data});
+			})
 		})
-	})
-
-	function error(code,msg){
-		res.statusCode = 500;
-		respond({error:msg,code:code||0});
-	}
-	function success(data){
-		res.statusCode = 200;
-		respond(data);
-	}
-	function respond(data){
-		res.setHeader('content-type', 'application/json');
-		res.end(JSON.stringify(data));
-	}
-});
-
-app.get('/api/candidate',function(req,res){
-	var qs = Url.parse(req.url,true).query;
-	
-	if (!qs.id) {
-		return error(101,'Missing Input');
-	}
-	getCandidate(qs.id,function(err,data){
-		if (err) {
-			console.log(err);
-			return error(110,err);
+	} else if (path == 'candidate') {
+		if (!qs.id) {
+			return error(101,'Missing Input');
 		}
-		success(data);
-	})
+		getCandidate(qs.id,function(err,data){
+			if (err) {
+				return error(110,err);
+			}
+			success(data);
+		})
+	} else if (path == 'role') {
+		if (!qs.name) {
+			return error(101,'Missing Input');
+		}
+		getRole(qs.name,function(err,data){
+			if (err) {
+				return error(110,err);
+			}
+			success(data);
+		})
+	} else {
+		res.statusCode = 404;
+		res.end();
+	}
 
 	function error(code,msg){
 		res.statusCode = 500;

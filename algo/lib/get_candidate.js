@@ -15,36 +15,36 @@ module.exports = function(candidateId,cb){
 		,p = [candidateId]
 	;
 	con.query(q,p,function(err,data){
-		if (err) {
-			cb(err);
-		} else if (!data[0]) {
-			cb('Candidate '+candidateId+' not found');
-		} else {
-			var candidate = {
-				id: data[0].id
-				,name: data[0].name
-				,linkedin_profile_id: data[0].linkedin_profile_id
-				,linkedin_img_url: data[0].linkedin_img_url
-				,work_history_items: []
-			}
-			data.forEach(function(row){
-				var workItem = {};
-				['start_time','end_time','company_id','company_name','executive_id','title','description'].forEach(function(k){
-					workItem[k] = row[k]
-				})
-				workItem.location = {city:'Los Angeles',state:'CA'};
-				candidate.work_history_items.push(workItem);
-			})
-			//cb(false,candidate);
-			getCandidateSkills(candidateId,function(err,data){ // @todo: make this async if being used for anything in production
-				if (err) {
-					return cb(err);
-				}
-				candidate.skills = data;
-				cb(false,candidate);
-			})
-		}
 		con.end();
+		if (err) {
+			return cb(err);
+		}
+		if (!data[0]) {
+			return cb('Candidate '+candidateId+' not found');
+		}
+		var candidate = {
+			id: data[0].id
+			,name: data[0].name
+			,linkedin_profile_id: data[0].linkedin_profile_id
+			,linkedin_img_url: data[0].linkedin_img_url
+			,work_history_items: []
+		}
+		data.forEach(function(row){
+			var workItem = {};
+			['start_time','end_time','company_id','company_name','executive_id','title','description'].forEach(function(k){
+				workItem[k] = row[k]
+			})
+			workItem.location = {city:'Los Angeles',state:'CA'};
+			candidate.work_history_items.push(workItem);
+		})
+		//cb(false,candidate);
+		getCandidateSkills(candidateId,function(err,data){ // @todo: make this async if being used for anything in production
+			if (err) {
+				return cb(err);
+			}
+			candidate.skills = data;
+			cb(false,candidate);
+		})		
 	})
 }
 
