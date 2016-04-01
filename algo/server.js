@@ -6,6 +6,8 @@
 var express = require('express')
 ,app = express()
 ,Url = require('url')
+,sext = require('sext')
+,config = require('./config.js')
 ,rankRole = require('./lib/rank_role.js')
 ,getCandidate = require('./lib/get_candidate.js')
 ;
@@ -25,10 +27,14 @@ app.get('/api/results',function(req,res){
 	}
 	rankRole(qs.role_id,function(err,data){
 		if (err) {
-			console.log(err);
 			return error(110,err);
 		}
-		success({candidates:data});
+		mergeCandidateData(data,function(err,data){
+			if (err) {
+				return error(111,err);
+			}
+			success({candidates:data});
+		})
 	})
 
 	function error(code,msg){
@@ -73,6 +79,29 @@ app.get('/api/candidate',function(req,res){
 	}
 });
 
-app.listen(3000);
+app.listen(config.port);
 
+
+
+
+function mergeCandidateData(data,cb){
+	if (!data.length) {
+		return process.nextTick(function(){
+			cb(false,data);
+		});
+	}
+	var numGot = 0
+	data.forEach(function(simpleCandidate){
+		getCandidate(simpleCandidate.id,function(err,fullCandidate){
+			if (err) {
+				cb(err);
+				return cb = function(){}
+			}
+			sext(simpleCandidate,fullCandidate)
+			if (++numGot == data.length) {
+				cb(false,data)
+			}
+		})
+	})
+}
 

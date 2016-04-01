@@ -4,5 +4,6 @@
 		"user": "root",
 		"pass": "",
 		"db": "fsb"
-	}
+	},
+	"port": 3001
 }

@@ -9,7 +9,7 @@ var argv = require('minimist')(process.argv.slice(2))
 var roleId = argv.role_id || argv.r || null
 
 if (!roleId) {
-	console.log('Please supply a roleId');
+	console.log('Please supply a role_id');
 	process.exit();
 }
 

@@ -10,6 +10,7 @@ create table candidates (
 	id int unsigned auto_increment not null
 	,name varchar(191) not null
 	,linkedin_profile_id varchar(191) default null
+	,linkedin_img_url varchar(191) default null
 	,visible tinyint(1) not null default 0
 	,created int not null
 	,updated int not null

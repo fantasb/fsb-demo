@@ -23,6 +23,7 @@ module.exports = function(candidateId,cb){
 				id: data[0].id
 				,name: data[0].name
 				,linkedin_profile_link: data[0].linkedin_profile_link
+				,linkedin_img_url: data[0].linkedin_img_url
 				,work_history_items: []
 			}
 			data.forEach(function(row){

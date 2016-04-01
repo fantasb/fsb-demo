@@ -6,18 +6,18 @@
 
 set @now = 1456905600;
 
-insert into candidates (name, linkedin_profile_id, visible, created, updated) values
-('Esteban Uribe', 'estebanuribe', 1, @now, @now),
-('Michael Murray', 'mikebrianmurray', 1, @now, @now),
-('Jamie Scanlon', 'jamiescanlon', 1, @now, @now),
-('Warren Dodge', 'wdodge', 1, @now, @now),
-('Jeremy Nelson', 'jlnelson19', 1, @now, @now),
-('Robert Joynt', 'rjoynt', 1, @now, @now),
-('Nathan Nakao', 'nathannakao', 1, @now, @now),
-('Yariv Nissim', 'yarivnis', 1, @now, @now),
-('Gustavo Halperin', 'gustavohalperin', 1, @now, @now),
-('Steve Saxon', 'xmlguy', 1, @now, @now),
-('Kamil Mroczek', 'kamilmroczek', 1, @now, @now)
+insert into candidates (name, linkedin_profile_id, linkedin_img_url, visible, created, updated) values
+('Esteban Uribe', 'estebanuribe', '/images/SAMPLE-profilephoto-01.jpg', 1, @now, @now),
+('Michael Murray', 'mikebrianmurray', '/images/SAMPLE-profilephoto-02.jpg', 1, @now, @now),
+('Jamie Scanlon', 'jamiescanlon', '/images/SAMPLE-profilephoto-03.jpg', 1, @now, @now),
+('Warren Dodge', 'wdodge', '/images/SAMPLE-profilephoto-04.jpg', 1, @now, @now),
+('Jeremy Nelson', 'jlnelson19', null, 1, @now, @now),
+('Robert Joynt', 'rjoynt', '/images/SAMPLE-profilephoto-05.jpg', 1, @now, @now),
+('Nathan Nakao', 'nathannakao', '/images/SAMPLE-profilephoto-06.jpg', 1, @now, @now),
+('Yariv Nissim', 'yarivnis', '/images/SAMPLE-profilephoto-07.jpg', 1, @now, @now),
+('Gustavo Halperin', 'gustavohalperin', null, 1, @now, @now),
+('Steve Saxon', 'xmlguy', '/images/SAMPLE-profilephoto-08.jpg', 1, @now, @now),
+('Kamil Mroczek', 'kamilmroczek', '/images/SAMPLE-profilephoto-09.jpg', 1, @now, @now)
 ;
 
 
