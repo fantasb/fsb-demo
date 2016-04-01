@@ -2,6 +2,7 @@
 --
 --
 -- (echo "drop database if exists fsb;" && cat ./workspace/database_init.sql && echo "use fsb;" && cat ./workspace/algo_schema.sql && cat ./workspace/algo_sample_data.sql) | mysqlc
+-- node algo/bin/score_candidates.js; node algo/bin/rank_role.js --role_id=1;
 --
 
 set @now = 1456905600;
@@ -41,12 +42,12 @@ insert into candidate_roles (candidate_id, role_id, created) values
 ;
 
 
-insert into skills (name, type, display_name, visible, created) values
-('fluent_english', 'language', 'Fluent English', 1, @now),
-('fluent_spanish', 'language', 'Fluent Spanish', 1, @now),
-('c++', null, 'C++', 1, @now),
-('objective_c', null, 'Objective C', 1, @now),
-('swift', null, 'Swift', 1, @now)
+insert into skills (name, type, display_name, display_order, visible, created) values
+('fluent_english', 'language', 'Fluent English', 100, 1, @now),
+('fluent_spanish', 'language', 'Fluent Spanish', 100, 1, @now),
+('c++', null, 'C++', 0, 1, @now),
+('objective_c', null, 'Objective C', 0, 1, @now),
+('swift', null, 'Swift', 0, 1, @now)
 ;
 
 

@@ -55,6 +55,7 @@ create table skills (
 	,name varchar(191) not null
 	,type varchar(64) default null
 	,display_name varchar(191) not null
+	,display_order int unsigned not null default 0
 	,visible tinyint(1) not null default 0
 	,created int not null
 
@@ -62,6 +63,7 @@ create table skills (
 	,unique key pk (name)
 	,index type_ (type)
 	,index display_name_ (display_name)
+	,index display_order_ (display_order)
 	,index visible_ (visible)
 	,index created_ (created)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
