@@ -27,12 +27,18 @@ app.get('/api/*',function(req,res){
 	;
 
 	if (path == 'results') {
-		if (!qs.role_id) {
+		// /api/results?role_id=1&offset=0&limit=10
+		if (!(qs.role_id && qs.limit && qs.offset)) {
 			return error(101,'Missing Input');
 		}
 		rankRole(qs.role_id,function(err,data){
 			if (err) {
 				return error(110,err);
+			}
+			try {
+				data = data.splice(qs.offset,qs.limit);
+			} catch (e) {
+				return error(102,'Invalid Input');
 			}
 			mergeCandidateData(data,function(err,data){
 				if (err) {
@@ -42,6 +48,7 @@ app.get('/api/*',function(req,res){
 			})
 		})
 	} else if (path == 'candidate') {
+		// /api/candidate?id=2
 		if (!qs.id) {
 			return error(101,'Missing Input');
 		}
@@ -52,6 +59,7 @@ app.get('/api/*',function(req,res){
 			success(data);
 		})
 	} else if (path == 'role') {
+		// /api/role?name=ios-developer
 		if (!qs.name) {
 			return error(101,'Missing Input');
 		}
