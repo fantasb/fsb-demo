@@ -11,6 +11,7 @@ var express = require('express')
 ,rankRole = require('./lib/rank_role.js')
 ,getCandidate = require('./lib/get_candidate.js')
 ,getRole = require('./lib/get_role.js')
+,getAlgoFactors = require('./lib/get_algo_factors.js')
 ;
 
 
@@ -64,6 +65,14 @@ app.get('/api/*',function(req,res){
 			return error(101,'Missing Input');
 		}
 		getRole(qs.name,function(err,data){
+			if (err) {
+				return error(110,err);
+			}
+			success(data);
+		})
+	} else if (path == 'factors') {
+		// /api/factors
+		getAlgoFactors(function(err,data){
 			if (err) {
 				return error(110,err);
 			}

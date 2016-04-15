@@ -345,6 +345,8 @@ create table algo_factors (
 	,display_name varchar(191) not null
 	,description varchar(512) not null default ''
 	,weight int not null default 0
+	,display_order int unsigned not null default 0
+	,visible tinyint(1) not null default 0
 	,created int not null
 	,updated int not null
 
@@ -352,8 +354,11 @@ create table algo_factors (
 	,unique key pk (name)
 	,index display_name_ (display_name)
 	,index weight_ (weight)
+	,index display_order_ (display_order)
+	,index visible_ (visible)
 	,index created_ (created)
 	,index updated_ (updated)
+	,index cq0 (visible,display_order)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
 
