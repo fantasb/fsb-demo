@@ -276,17 +276,17 @@ insert into education_history_item_roles (education_history_item_id, role_id, cr
 -- BEGIN Scoring
 
 insert into algo_factors (name,display_name,description,weight,visible,display_order,created,updated) values
-('language_skills', 'Language Skills', '', 5, 0, 0, @now, @now),
-('role_skill_fundamentals', 'Role Skill Fundamentals', '', 10, 1, 0, @now, @now),
-('role_experience', 'Role Experience', '', 15, 1, 0, @now, @now),
-('misc_role_facts', 'Misc Role Facts', '', 10, 1, 0, @now, @now),
-('basic_education', 'Basic Education', '', 5, 1, 0, @now, @now),
-('role_education', 'Role Education', '', 5, 1, 0, @now, @now),
-('current_company', 'Current Company', '', 5, 1, 0, @now, @now),
-('previous_companies', 'Previous Companies', '', 1, 0, 5, @now, @now),
-('executives', 'Current Executive', '', 15, 1, 0, @now, @now),
-('venture_funded', 'Venture-Funded Experience', '', 10, 0, 0, @now, @now),
-('misc_company_facts', 'Misc Company Facts', '', 5, 1, 0, @now, @now)
+('language_skills', 'Language Skills', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 5, 0, 0, @now, @now),
+('role_skill_fundamentals', 'Role Skill Fundamentals', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 10, 1, 0, @now, @now),
+('role_experience', 'Role Experience', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 15, 1, 0, @now, @now),
+('misc_role_facts', 'Misc Role Facts', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 10, 1, 0, @now, @now),
+('basic_education', 'Basic Education', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 5, 1, 0, @now, @now),
+('role_education', 'Role Education', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 5, 1, 0, @now, @now),
+('current_company', 'Current Company', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 5, 1, 0, @now, @now),
+('previous_companies', 'Previous Companies', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 1, 0, 5, @now, @now),
+('executives', 'Current Executive', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 15, 1, 0, @now, @now),
+('venture_funded', 'Venture-Funded Experience', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 10, 0, 0, @now, @now),
+('misc_company_facts', 'Misc Company Facts', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In imperdiet dictum ipsum sit amet porttitor.', 5, 1, 0, @now, @now)
 ;
 
 -- END Scoring
