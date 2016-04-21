@@ -275,16 +275,16 @@ insert into education_history_item_roles (education_history_item_id, role_id, cr
 -- BEGIN Scoring
 
 insert into algo_factors (name,display_name,description,weight,visible,display_order,created,updated) values
-('language_skills', 'Language Skills', 'Fluency of contemporary communication skills', 5, 0, 0, @now, @now),
+('language_skills', 'Language Skills', 'Fluency of contemporary communication skills', 5, 1, 0, @now, @now),
 ('role_skill_fundamentals', 'Role Skill Fundamentals', 'Experience with technologies, applications, etc common to the Role', 10, 1, 0, @now, @now),
 ('role_experience', 'Role Experience', 'Measure of time working directly within the Role', 15, 1, 0, @now, @now),
 ('misc_role_facts', 'Misc Role Facts', 'Miscellaneous personal attributes or achievements relevant to the Role', 10, 1, 0, @now, @now),
 ('basic_education', 'Basic Education', 'Has earned a Bachelor\'s degree or Role equivalent', 5, 1, 0, @now, @now),
 ('role_education', 'Role Education', 'Further education specific to the Role', 5, 1, 0, @now, @now),
 ('current_company', 'Current Company', 'Currently works at a company well respected for their work in the Role', 5, 1, 0, @now, @now),
-('previous_companies', 'Previous Companies', 'Previous work history implies experience within Role', 1, 0, 5, @now, @now),
+('previous_companies', 'Previous Companies', 'Previous work history implies experience within Role', 5, 1, 5, @now, @now),
 ('executives', 'Current Executive', 'Has worked with top-ranktted executives in relation to the Role', 15, 1, 0, @now, @now),
-('venture_funded', 'Venture-Funded Experience', 'Intimate with venture-funded work culture', 10, 0, 0, @now, @now),
+('venture_funded', 'Venture-Funded Experience', 'Intimate with venture-funded work culture', 10, 1, 0, @now, @now),
 ('misc_company_facts', 'Misc Company Facts', 'Triumphs working at top-ranktted companies', 5, 1, 0, @now, @now)
 ;
 
