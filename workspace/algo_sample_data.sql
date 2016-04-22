@@ -8,17 +8,17 @@
 set @now = 1456905600;
 
 insert into candidates (name, linkedin_profile_id, linkedin_img_url, visible, created, updated) values
-('Esteban Uribe', 'estebanuribe', '/images/SAMPLE-profilephoto-01.jpg', 1, @now, @now),
-('Michael Murray', 'mikebrianmurray', '/images/SAMPLE-profilephoto-02.jpg', 1, @now, @now),
-('Jamie Scanlon', 'jamiescanlon', '/images/SAMPLE-profilephoto-03.jpg', 1, @now, @now),
-('Warren Dodge', 'wdodge', '/images/SAMPLE-profilephoto-04.jpg', 1, @now, @now),
-('Jeremy Nelson', 'jlnelson19', null, 1, @now, @now),
-('Robert Joynt', 'rjoynt', '/images/SAMPLE-profilephoto-05.jpg', 1, @now, @now),
-('Nathan Nakao', 'nathannakao', '/images/SAMPLE-profilephoto-06.jpg', 1, @now, @now),
-('Yariv Nissim', 'yarivnis', '/images/SAMPLE-profilephoto-07.jpg', 1, @now, @now),
-('Gustavo Halperin', 'gustavohalperin', null, 1, @now, @now),
-('Steve Saxon', 'xmlguy', '/images/SAMPLE-profilephoto-08.jpg', 1, @now, @now),
-('Kamil Mroczek', 'kamilmroczek', '/images/SAMPLE-profilephoto-09.jpg', 1, @now, @now)
+('Esteban Uribe', 'estebanuribe', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/5/000/235/389/0eee165.jpg', 1, @now, @now),
+('Michael Murray', 'mikebrianmurray', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/5/000/229/335/35450a0.jpg', 1, @now, @now),
+('Jamie Scanlon', 'jamiescanlon', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/1/000/0bd/2c1/318c9ee.jpg', 1, @now, @now),
+('Warren Dodge', 'wdodge', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/3/000/00b/39b/0e6e8f7.jpg', 1, @now, @now),
+('Jeremy Nelson', 'jlnelson19', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/5/005/019/3a4/1dfb0c2.jpg', 1, @now, @now),
+('Robert Joynt', 'rjoynt', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAANtAAAAJDc0ODA2OWFiLWQyOTItNDg4Ny1hMjEwLTA5MTQ0ZDdjZWQ1Mg.jpg', 1, @now, @now),
+('Nathan Nakao', 'nathannakao', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/7/005/088/2b9/16f1db3.jpg', 1, @now, @now),
+('Yariv Nissim', 'yarivnis', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/2/000/0e1/11e/0fa349a.jpg', 1, @now, @now),
+('Gustavo Halperin', 'gustavohalperin', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/5/005/03f/208/34c8700.jpg', 1, @now, @now),
+('Steve Saxon', 'xmlguy', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/1/000/033/278/25ad146.jpg', 1, @now, @now),
+('Kamil Mroczek', 'kamilmroczek', 'https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/6/005/09a/337/1dbc47f.jpg', 1, @now, @now)
 ;
 
 
