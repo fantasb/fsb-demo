@@ -11,6 +11,7 @@ create table candidates (
 	,name varchar(191) not null
 	,linkedin_profile_id varchar(191) default null
 	,linkedin_img_url varchar(191) default null
+	,primary_email varchar(191) default null
 	,visible tinyint(1) not null default 0
 	,created int not null
 	,updated int not null
@@ -18,11 +19,29 @@ create table candidates (
 	,primary key (id)
 	,unique key pk (linkedin_profile_id)
 	,index name_ (name)
+	,index primary_email_ (primary_email)
 	,index visible_ (visible)
 	,index created_ (created)
 	,index updated_ (updated)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
+
+create table candidate_emails (
+	candidate_id int unsigned not null
+	,email varchar(191) not null
+	,status tinyint(1) not null default 0 -- e.g. active/visible/etc
+	,label varchar(64) default null -- e.g. 'contact'/'work'/etc
+	,created int not null
+
+	,primary key (candidate_id,email)
+	,unique key email_uk (email)
+	,index candidate_id_ (candidate_id)
+	,index status_ (status)
+	,index label_ (label)
+	,index created_ (created)
+	,index cq0 (candidate_id,status)
+	,index cq1 (candidate_id,label,status)
+);
 
 create table roles (
 	id int unsigned auto_increment not null
