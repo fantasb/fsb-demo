@@ -8,7 +8,8 @@
 		"google-spreadsheet": "1.0.1",
 		"minimist": "1.1.1",
 		"mysql": "2.10.2",
-		"sext": "0.1.6"
+		"sext": "0.1.6",
+		"through": "2.3.8"
 	},
 	"devDependencies": {
 		"tape": "~4.0.0"
