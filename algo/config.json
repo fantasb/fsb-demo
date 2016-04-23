@@ -1,9 +1,16 @@
 {
+	"port": 3001,
 	"mysql": {
 		"host": "127.0.0.1",
 		"user": "root",
 		"pass": "",
 		"db": "fsb"
 	},
-	"port": 3001
+	"google": {
+		"type": "service_account",
+		"client_id": "",
+		"client_email": "",
+		"private_key_id": "",
+		"private_key": ""
+	}
 }
