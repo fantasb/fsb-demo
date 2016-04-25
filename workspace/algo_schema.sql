@@ -3,6 +3,8 @@
 --
 -- drop table if exists candidate_role_factor_scores,algo_factors,work_history_item_roles,work_history_items,executives,education_history_item_roles,education_history_items,degree_types,education_institutions,misc_company_fact_companies,misc_company_facts,companies,locations,candidate_misc_role_facts,misc_role_fact_roles,misc_role_facts,candidate_skills,role_skill_fundamentals,skills,candidate_roles,roles,candidates;
 --
+-- (echo "drop database if exists fsb;" && cat ./workspace/database_init.sql && echo "use fsb;" && cat ./workspace/algo_schema.sql) | mysqlc
+--
 
 -- Note: linkedin_profile_id currently being used as primary key
 -- @todo: Needs rethinking; what if they don't have linkedin profile?
@@ -185,6 +187,7 @@ create table locations (
 create table companies (
 	id int unsigned auto_increment not null
 	,name varchar(191) not null
+	,display_name varchar(191) not null
 	,description varchar(512) not null default ''
 	,rating int unsigned default null
 	,venture_funded tinyint(1) default null
@@ -193,6 +196,7 @@ create table companies (
 
 	,primary key (id)
 	,unique key pk (name)
+	,unique key display_name_ (display_name)
 	,index created_ (created)
 	,index updated_ (updated)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;

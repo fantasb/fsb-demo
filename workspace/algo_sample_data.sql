@@ -91,27 +91,27 @@ insert into candidate_skills (candidate_id, skill_id, created) values
 ;
 
 
-insert into companies (name, rating, venture_funded, created, updated) values
-('Tinder', 40, 1, @now, @now),
-('Snapchat', 50, 1, @now, @now),
-('Evite', 60, 1, @now, @now),
-('Wag! Labs', 60, 1, @now, @now),
-('Okta, Inc.', 50, 1, @now, @now),
-('TSI VA', null, 0, @now, @now),
-('TrueCar', 90, 1, @now, @now),
-('Joya', null, 0, @now, @now),
-('Amazon', 100, 0, @now, @now),
-('Sense360', null, 1, @now, @now),
-('Cerrell Associates', null, null, @now, @now),
-('GonnaBe', 30, null, @now, @now),
-('Hey Daddio!', 50, null, @now, @now),
-('GameChanger Labs', 60, null, @now, @now),
-('Amgen', 25, null, @now, @now),
-('US Renel Care', 10, null, @now, @now),
-('The Omega Group, Inc.', 20, 0, @now, @now),
-('Starmount', 70, 0, @now, @now),
-('Neudesic', 65, 0, @now, @now),
-('Thinknear by Telenav', 55, null, @now, @now)
+insert into companies (name, display_name, rating, venture_funded, created, updated) values
+('tinder', 'Tinder', 40, 1, @now, @now),
+('snapchat', 'Snapchat', 50, 1, @now, @now),
+('evite', 'Evite', 60, 1, @now, @now),
+('wag-labs', 'Wag! Labs', 60, 1, @now, @now),
+('okta-inc', 'Okta, Inc.', 50, 1, @now, @now),
+('tsi-va', 'TSI VA', null, 0, @now, @now),
+('truecar', 'TrueCar', 90, 1, @now, @now),
+('joya', 'Joya', null, 0, @now, @now),
+('amazon', 'Amazon', 100, 0, @now, @now),
+('sense360', 'Sense360', null, 1, @now, @now),
+('cerell-associates', 'Cerrell Associates', null, null, @now, @now),
+('gonnabe', 'GonnaBe', 30, null, @now, @now),
+('hey-daddio', 'Hey Daddio!', 50, null, @now, @now),
+('gamechanger-labs', 'GameChanger Labs', 60, null, @now, @now),
+('amgen', 'Amgen', 25, null, @now, @now),
+('us-renel-care', 'US Renel Care', 10, null, @now, @now),
+('the-omega-group-inc', 'The Omega Group, Inc.', 20, 0, @now, @now),
+('starmount', 'Starmount', 70, 0, @now, @now),
+('neudesic', 'Neudesic', 65, 0, @now, @now),
+('thinknear-by-telenav', 'Thinknear by Telenav', 55, null, @now, @now)
 ;
 
 

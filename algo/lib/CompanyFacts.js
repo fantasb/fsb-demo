@@ -15,7 +15,8 @@ var getById = module.exports.getById = function(id,cb){
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = 'Cannot find CompanyFact with id '+id;
+			err = new Error('Cannot find CompanyFact with id '+id);
+			err.code = 404;
 		}
 		if (err) {
 			return cb(err);
@@ -33,7 +34,8 @@ var getByName = module.exports.getByName = function(name,cb){
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = 'Cannot find CompanyFact with name '+name;
+			err = new Error('Cannot find CompanyFact with name '+name);
+			err.code = 404;
 		}
 		if (err) {
 			return cb(err);
@@ -56,6 +58,22 @@ module.exports.create = function(name,displayName,description,cb){
 		}
 		//cb(false, createDto({name:name, display_name:displayName, description:description, updated:now});
 		getByName(name,cb);
+	});
+}
+
+module.exports.addCompanyFactCompany = function(factId,companyId,cb){
+	var con = db()
+		,q = 'insert ignore into misc_company_fact_companies (misc_company_fact_id,company_id,created) values (?,?,?)'
+		,now = Math.floor(Date.now()/1000)
+		,p = [factId, companyId, now]
+	;
+
+	con.query(q,p,function(err,data){
+		con.end();
+		if (err) {
+			return cb(err);
+		}
+		cb(false,data);
 	});
 }
 
