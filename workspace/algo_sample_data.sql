@@ -276,7 +276,7 @@ insert into education_history_item_roles (education_history_item_id, role_id, cr
 
 insert into algo_factors (name,display_name,description,weight,visible,display_order,created,updated) values
 ('language_skills', 'Language Skills', '[ex]Fluent in English[/ex]', 0, 0, 0, @now, @now),
-('role_skill_fundamentals', 'Skill Fundamentals', 'Experience with technologies, applications, etc common to the Role [ex]Objective C, Swift, RESTful Apis, XCode, Agile, OOP, ...[/ex]', 40, 1, 100, @now, @now),
+('role_skill_fundamentals', 'Skill Fundamentals', 'Experience with technologies, applications, etc common to the Role [ex]Objective C, Swift, RESTful Apis, Agile...[/ex]', 40, 1, 100, @now, @now),
 ('role_experience', 'Years of Work Experience', 'Measure of time working directly within the Role [ex]Years worked as an iOS Developer[/ex]', 15, 1, 101, @now, @now),
 ('misc_role_facts', 'Role-Specific Achievements', '[ex]Apps in App Store[/ex]', 15, 1, 102, @now, @now),
 ('basic_education', 'Basic Education', 'Has earned a Bachelor\'s degree or equivalent', 0, 0, 0, @now, @now),
