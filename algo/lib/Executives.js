@@ -8,14 +8,14 @@ var db = require('../lib/db.mysql.js')
 
 var getById = module.exports.getById = function(id,cb){
 	var con = db()
-		,q = 'select * from companies where id=?'
+		,q = 'select * from executives where id=?'
 		,p = [id]
 	;
 
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = 'Cannot find Company with id '+id;
+			err = 'Cannot find Executive with id '+id;
 			err.code = 404;
 		}
 		if (err) {
@@ -25,16 +25,16 @@ var getById = module.exports.getById = function(id,cb){
 	});
 }
 
-var getByName = module.exports.getByName = function(name,cb){
+var getByLinkedInId = module.exports.getByLinkedInId = function(lid,cb){
 	var con = db()
-		,q = 'select * from companies where name=?'
-		,p = [name]
+		,q = 'select * from executives where linkedin_profile_id=?'
+		,p = [lid]
 	;
 
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = new Error('Cannot find Company with name '+name);
+			err = new Error('Cannot find Executive with linkedin_profile_id '+lid);
 			err.code = 404;
 		}
 		if (err) {
@@ -44,13 +44,11 @@ var getByName = module.exports.getByName = function(name,cb){
 	});
 }
 
-module.exports.create = function(name,displayName,description,cb){
-	if (description === null) description = '';
-
+module.exports.create = function(name,linkedInId,cb){
 	var con = db()
-		,q = 'insert into companies (name,display_name,description,created,updated) values (?,?,?,?,?) on duplicate key update display_name=?,description=?,updated=?'
+		,q = 'insert into executives (name,linkedin_profile_id,created,updated) values (?,?,?,?) on duplicate key update name=?,updated=?'
 		,now = Math.floor(Date.now()/1000)
-		,p = [name,displayName,description,now,now,displayName,description,now]
+		,p = [name,linkedInId,now,now, name,now]
 	;
 
 	con.query(q,p,function(err,data){
@@ -58,8 +56,8 @@ module.exports.create = function(name,displayName,description,cb){
 		if (err) {
 			return cb(err);
 		}
-		//cb(false, createDto({name:name, display_name:displayName, description:description, updated:now});
-		getByName(name,cb);
+		//cb(false, createDto({ ... });
+		getByLinkedInId(linkedInId,cb);
 	});
 }
 
@@ -68,13 +66,13 @@ function createDto(data){
 	var dto = sext({
 		id: null
 		,name: null
-		,display_name: null
-		,description: null
+		,linkedin_profile_id: null
 		,rating: null
 		,created: null
 		,updated: null
 	}, data);
 	//dto.id = +dto.id;
+	//dto.rating = +dto.rating;
 	//dto.created = +dto.created;
 	//dto.updated = +dto.updated;
 	return dto;

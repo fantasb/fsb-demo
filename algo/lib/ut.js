@@ -128,6 +128,14 @@ module.exports.dateDiff = function(d0,d1){
 }
 
 
+
+module.exports.makeUrlPathFriendlyName = function(displayName){
+	return encodeURIComponent(displayName.toLowerCase().replace(/ +/g,'-'));
+}
+
+
+
+
 module.exports.stats = function(opts){
 	return new stats(opts);
 };

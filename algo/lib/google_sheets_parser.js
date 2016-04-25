@@ -56,7 +56,7 @@ module.exports = function(sheetIds, opts){
 		++activeQueries;
 		getSheet(sheetId,function(err, data){
 			if (err && opts.retryQuery && (!retryNum || retryNum < opts.retryQuery)) {
-				console.log('got error, retrying ['+sheetId+'] -- google_sheet_parser',err);
+				console.log('got error, retrying ['+sheetId+'] -- google_sheets_parser',err);
 				return setTimeout(function(){
 					--activeQueries;
 					runQuery(sheetId,cb,(retryNum||0)+1);

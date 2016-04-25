@@ -8,14 +8,14 @@ var db = require('../lib/db.mysql.js')
 
 var getById = module.exports.getById = function(id,cb){
 	var con = db()
-		,q = 'select * from companies where id=?'
+		,q = 'select * from roles where id=?'
 		,p = [id]
 	;
 
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = 'Cannot find Company with id '+id;
+			err = 'Cannot find Role with id '+id;
 			err.code = 404;
 		}
 		if (err) {
@@ -27,14 +27,14 @@ var getById = module.exports.getById = function(id,cb){
 
 var getByName = module.exports.getByName = function(name,cb){
 	var con = db()
-		,q = 'select * from companies where name=?'
+		,q = 'select * from roles where name=?'
 		,p = [name]
 	;
 
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = new Error('Cannot find Company with name '+name);
+			err = new Error('Cannot find Role with name '+name);
 			err.code = 404;
 		}
 		if (err) {
@@ -44,13 +44,13 @@ var getByName = module.exports.getByName = function(name,cb){
 	});
 }
 
-module.exports.create = function(name,displayName,description,cb){
-	if (description === null) description = '';
+module.exports.create = function(name,displayName,parentRoleId,visible,cb){
+	visible = visible ? 1 : 0;
 
 	var con = db()
-		,q = 'insert into companies (name,display_name,description,created,updated) values (?,?,?,?,?) on duplicate key update display_name=?,description=?,updated=?'
+		,q = 'insert into roles (name,display_name,parent_role_id,visible,created) values (?,?,?,?,?) on duplicate key update display_name=?,parent_role_id=?,visible=?'
 		,now = Math.floor(Date.now()/1000)
-		,p = [name,displayName,description,now,now,displayName,description,now]
+		,p = [name,displayName,parentRoleId,visible,now, displayName,parentRoleId,visible]
 	;
 
 	con.query(q,p,function(err,data){
@@ -58,7 +58,7 @@ module.exports.create = function(name,displayName,description,cb){
 		if (err) {
 			return cb(err);
 		}
-		//cb(false, createDto({name:name, display_name:displayName, description:description, updated:now});
+		//cb(false, createDto({ ... });
 		getByName(name,cb);
 	});
 }
@@ -69,13 +69,13 @@ function createDto(data){
 		id: null
 		,name: null
 		,display_name: null
-		,description: null
-		,rating: null
+		,parent_role_id: null
+		,visible: null
 		,created: null
-		,updated: null
 	}, data);
 	//dto.id = +dto.id;
+	//dto.parent_role_id = +dto.parent_role_id;
+	//dto.visible = +dto.visible;
 	//dto.created = +dto.created;
-	//dto.updated = +dto.updated;
 	return dto;
 }

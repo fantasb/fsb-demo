@@ -196,7 +196,7 @@ create table companies (
 
 	,primary key (id)
 	,unique key pk (name)
-	,unique key display_name_ (display_name)
+	,index display_name_ (display_name)
 	,index created_ (created)
 	,index updated_ (updated)
 ) engine=innodb charset=utf8mb4 collate=utf8mb4_unicode_ci;
@@ -270,12 +270,12 @@ create table education_history_items (
 	,end_time int default null
 	,education_institution_id int unsigned default null -- force a college/institution?
 	,degree_type_id int unsigned not null
-	,description varchar(1024) not null default ''
+	,description text
 	,created int not null
 	,updated int not null
 
 	,primary key (id)
-	,unique key pk (candidate_id,start_time,end_time)
+	,unique key pk (candidate_id,degree_type_id,start_time)
 	,foreign key candidate_id_fk (candidate_id) references candidates (id)
 	,foreign key education_institution_id_fk (education_institution_id) references education_institutions (id)
 	,foreign key degree_type_id_fk (degree_type_id) references degree_types (id)
@@ -328,12 +328,12 @@ create table work_history_items (
 	,executive_id int unsigned default null -- force a boss?
 	,location_id int unsigned default null
 	,title varchar(128) not null
-	,description varchar(1024) not null default ''
+	,description text
 	,created int not null
 	,updated int not null
 
 	,primary key (id)
-	,unique key pk (candidate_id,start_time,end_time)
+	,unique key pk (candidate_id,start_time)
 	,foreign key candidate_id_fk (candidate_id) references candidates (id)
 	,foreign key company_id_fk (company_id) references companies (id)
 	,foreign key executive_id_fk (executive_id) references executives (id)

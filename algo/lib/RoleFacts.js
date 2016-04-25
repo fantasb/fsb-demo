@@ -8,14 +8,14 @@ var db = require('../lib/db.mysql.js')
 
 var getById = module.exports.getById = function(id,cb){
 	var con = db()
-		,q = 'select * from companies where id=?'
+		,q = 'select * from misc_role_facts where id=?'
 		,p = [id]
 	;
 
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = 'Cannot find Company with id '+id;
+			err = new Error('Cannot find RoleFact with id '+id);
 			err.code = 404;
 		}
 		if (err) {
@@ -27,14 +27,14 @@ var getById = module.exports.getById = function(id,cb){
 
 var getByName = module.exports.getByName = function(name,cb){
 	var con = db()
-		,q = 'select * from companies where name=?'
+		,q = 'select * from misc_role_facts where name=?'
 		,p = [name]
 	;
 
 	con.query(q,p,function(err,data){
 		con.end();
 		if (!err && !data[0]) {
-			err = new Error('Cannot find Company with name '+name);
+			err = new Error('Cannot find RoleFact with name '+name);
 			err.code = 404;
 		}
 		if (err) {
@@ -44,13 +44,13 @@ var getByName = module.exports.getByName = function(name,cb){
 	});
 }
 
-module.exports.create = function(name,displayName,description,cb){
-	if (description === null) description = '';
+module.exports.create = function(name,displayName,description,weight,cb){
+	if (weight === null) weight = 0;
 
 	var con = db()
-		,q = 'insert into companies (name,display_name,description,created,updated) values (?,?,?,?,?) on duplicate key update display_name=?,description=?,updated=?'
+		,q = 'insert into misc_role_facts (name,display_name,description,weight,created,updated) values (?,?,?,?,?,?) on duplicate key update display_name=?,description=?,weight=?,updated=?'
 		,now = Math.floor(Date.now()/1000)
-		,p = [name,displayName,description,now,now,displayName,description,now]
+		,p = [name,displayName,description,weight,now,now,displayName,description,weight,now]
 	;
 
 	con.query(q,p,function(err,data){
@@ -58,7 +58,7 @@ module.exports.create = function(name,displayName,description,cb){
 		if (err) {
 			return cb(err);
 		}
-		//cb(false, createDto({name:name, display_name:displayName, description:description, updated:now});
+		//cb(false, createDto({ ... });
 		getByName(name,cb);
 	});
 }
@@ -70,7 +70,6 @@ function createDto(data){
 		,name: null
 		,display_name: null
 		,description: null
-		,rating: null
 		,created: null
 		,updated: null
 	}, data);

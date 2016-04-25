@@ -5,8 +5,9 @@ Creates Company if not exists
 To Do
 	- Smart soft match
 */
-var Companies = require('../lib/Companies.js')
-,through = require('through')
+var through = require('through')
+,ut = require('../lib/ut')
+,Companies = require('../lib/Companies.js')
 ;
 
 module.exports = function(nameKey){
@@ -16,22 +17,21 @@ module.exports = function(nameKey){
 			return s.emit('company-find-fail', sourceData, 'name is null');
 		}
 
-		Companies.makeNameWithDisplayName(companyDisplayName,function(err,companyName){
-			if (err) return s.emit('company-find-fail', {display_name:companyDisplayName}, err);
-			Companies.getByName(companyName,function(err,data){
-				if (!err) {
-					sourceData.company = data;
-					return s.queue(sourceData);
-				}
-				if (err.code != 404) {
-					return s.emit('company-find-fail', {display_name:companyDisplayName}, err);
-				}
-				Companies.create(companyName,companyDisplayName,null,null,function(err,data){
-					if (err) return s.emit('company-find-fail', {display_name:companyDisplayName}, err);
-					s.emit('company-created', data, err);
-					sourceData.company = data;
-					s.queue(sourceData);
-				});
+		var companyName = ut.makeUrlPathFriendlyName(companyDisplayName);
+		Companies.getByName(companyName,function(err,data){
+			if (!err) {
+				sourceData.company = data;
+				return s.queue(sourceData);
+			}
+			if (err.code != 404) {
+				return s.emit('company-find-fail', {display_name:companyDisplayName}, err);
+			}
+
+			Companies.create(companyName,companyDisplayName,null,function(err,data){
+				if (err) return s.emit('company-find-fail', {name:companyName, display_name:companyDisplayName}, err);
+				s.emit('company-created', data, err);
+				sourceData.company = data;
+				s.queue(sourceData);
 			});
 		});
 		

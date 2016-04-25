@@ -19,14 +19,14 @@ node ./bin/import.misc_company_facts.js \
 var through = require('through')
 ,ut = require('../lib/ut')
 ,CompanyFacts = require('../lib/CompanyFacts')
-,googleSheetParser = require('../lib/google_sheet_parser')
+,googleSheetsParser = require('../lib/google_sheets_parser')
 ,googleWorksheetRows = require('../lib/google_worksheet_rows')
 ,findCompany = require('../lib/find_company')
 ;
 
 var argv = require('minimist')(process.argv.slice(2))
 ;
-if (!(argv.factName && argv.factDisplay && argv.factDescription && argv.sheetId && argv.worksheet && argv.columnName)) {
+if (!(argv.factName && argv.factDisplay && argv.factDescription && argv.sheetId && typeof argv.worksheet == 'number' && argv.columnName)) {
 	console.log('Missing Input');
 	process.exit();
 }
@@ -47,7 +47,7 @@ CompanyFacts.create(argv.factName, argv.factDisplay, argv.factDescription, funct
 		return console.log('ERROR','CompanyFacts.create()',err);
 	}
 
-	var s = googleSheetParser()
+	var s = googleSheetsParser()
 		.on('sheet-fetch-fail', function(data,err){
 			console.log('Sheet fetch fail: '+JSON.stringify(data), err);
 			++stats.sheetFetchFail;
@@ -67,6 +67,7 @@ CompanyFacts.create(argv.factName, argv.factDisplay, argv.factDescription, funct
 			++stats.companyCreated;
 		})
 	.pipe(through(function(data){
+		// note: this stream has async in it so parent will end early and stats may be off. is ok for now if spot check
 		var company = data.company;
 		CompanyFacts.addCompanyFactCompany(companyFact.id,company.id,function(err){
 			if (err) {
