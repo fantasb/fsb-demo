@@ -13,7 +13,7 @@ set @now = 1456905600;
 
 insert into roles (name, display_name, parent_role_id, visible, created) values
 ('ios-developer', 'iOS Developer', null, 1, @now)
-,('recruiter', 'Recruiter', null, 1, @now)
+-- ,('recruiter', 'Recruiter', null, 1, @now)
 ;
 
 

@@ -166,9 +166,12 @@ function addWorkHistoryItem(candidateId, title, roleDisplayName, companyDisplayN
 
 	var role;
 	if (roleDisplayName) {
-		// switch these to require role already exists
+		// require role to already exist...
 		//Roles.getByName(ut.makeUrlPathFriendlyName(roleDisplayName),function(err,data){
-		Roles.create(ut.makeUrlPathFriendlyName(roleDisplayName),roleDisplayName,null,true,function(err,data){
+		// create a new role if doesnt exist...
+		//Roles.create(ut.makeUrlPathFriendlyName(roleDisplayName),roleDisplayName,null,true,function(err,data){
+		// ignore if role doesn't exist...
+		Roles.getByName(ut.makeUrlPathFriendlyName(roleDisplayName),function(err,data){ if (err && err.code == 404) return next();
 			if (err) return error(err);
 			role = data;
 			next();
