@@ -26,5 +26,6 @@ node ./algo/bin/import.candidates.js --sheetId=1g1t5AjeqfpB8D0W87HPGgqHYFXlyGQIq
 
 (echo "use fsb;" && cat ./workspace/algo_skill_fundamentals.sql) | mysql $sqlCreds
 
-node ./algo/bin/score_candidates.js; node algo/bin/rank_role.js --role_id=1;
+node ./algo/bin/score_candidates.js
+node algo/bin/rank_role.js --role_id=1
 
