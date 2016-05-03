@@ -31,56 +31,53 @@ module.exports = function(opts){
 			,candidateName = (sourceData.name||'').trim()
 			,candidateLinkedInImgUrl = (sourceData.linkedinimageurl||'').trim()
 			,candidatePrimaryEmail = (sourceData.email||'').trim()
-			,candidateRoleDisplayName = (sourceData.role||'').trim()
+			,candidateRoleDisplayNames = (sourceData.roles||'').trim()
 		;
-		if (!(candidateLid || candidateName || candidateRole)) {
-			return s.emit('candidate-fatal', 'missing LinkedIn Username, Name, or Role field', sourceData);
+		if (!(candidateLid && candidateName && candidateRoleDisplayNames)) {
+			return s.emit('candidate-fatal', 'missing LinkedIn Username, Name, or Roles field', sourceData);
 		}
 
-		Roles.getByName(ut.makeUrlPathFriendlyName(candidateRoleDisplayName),function(err,candidateRole){
+		Candidates.create(candidateName, candidateLid, candidateLinkedInImgUrl, candidatePrimaryEmail, 1, function(err,candidate){
 			if (err) return s.emit('candidate-fatal', err, sourceData);
-			Candidates.create(candidateName, candidateLid, candidateLinkedInImgUrl, candidatePrimaryEmail, 1, function(err,candidate){
-				if (err) return s.emit('candidate-fatal', err, sourceData);
-				// --- CANDIDATE CREATED
+			// --- CANDIDATE CREATED
 
-				Candidates.addRole(candidate.id, candidateRole.id, function(err){
-					if (err) s.emit('soft-error', err);
-				});
+			addCandidateRoles(candidate.id, candidateRoleDisplayNames.split(','), function(err){
+				if (err) s.emit('soft-error', err);
+			});
 
-				if (candidatePrimaryEmail) {
-					Candidates.addEmail(candidate.id,candidatePrimaryEmail,'scrape',function(err){
-						if (err) s.emit('soft-error', err, sourceData);
-					});
-				}s
-
-				addSkills(candidate.id, (sourceData.skills||'').split(','),function(err){
+			if (candidatePrimaryEmail) {
+				Candidates.addEmail(candidate.id,candidatePrimaryEmail,'scrape',function(err){
 					if (err) s.emit('soft-error', err, sourceData);
 				});
+			}s
 
-				var i=1;
-				while (sourceData['degree'+i+'field']) {
-					addDegree(candidate.id,sourceData['degree'+i+'name'],sourceData['degree'+i+'field'],sourceData['degree'+i+'institution'],sourceData['degree'+i+'description'],sourceData['degree'+i+'startdate'],sourceData['degree'+i+'enddate'],function(err){
-						if (err) s.emit('soft-error', err, sourceData);
-					});
-					++i;
-				}
-
-				var i=1;
-				while (sourceData['workhistoryitem'+i+'title']) {
-					addWorkHistoryItem(candidate.id,sourceData['workhistoryitem'+i+'title'],sourceData['workhistoryitem'+i+'role'],sourceData['workhistoryitem'+i+'company'],sourceData['workhistoryitem'+i+'description'],sourceData['workhistoryitem'+i+'location'],sourceData['workhistoryitem'+i+'executive'],sourceData['workhistoryitem'+i+'executivelinkedinid'],sourceData['workhistoryitem'+i+'startdate'],sourceData['workhistoryitem'+i+'enddate'],function(err){
-						if (err) s.emit('soft-error', err, sourceData);
-					});
-					++i;
-				}
-
-				var workedOnHighVolumeApps = (sourceData['workedonhigh-volumeapp']||'').trim().toLowerCase();
-				if (workedOnHighVolumeApps && workedOnHighVolumeApps != 'no' && workedOnHighVolumeApps != 'false') {
-					addMiscRoleFact(candidate.id,'worked_apps_volume_100k',function(err){
-						if (err) s.emit('soft-error', err, sourceData);
-					});
-				}
-
+			addSkills(candidate.id, (sourceData.skills||'').split(','),function(err){
+				if (err) s.emit('soft-error', err, sourceData);
 			});
+
+			var i=1;
+			while (sourceData['degree'+i+'field']) {
+				addDegree(candidate.id,sourceData['degree'+i+'name'],sourceData['degree'+i+'field'],sourceData['degree'+i+'institution'],sourceData['degree'+i+'description'],sourceData['degree'+i+'startdate'],sourceData['degree'+i+'enddate'],function(err){
+					if (err) s.emit('soft-error', err, sourceData);
+				});
+				++i;
+			}
+
+			var i=1;
+			while (sourceData['workhistoryitem'+i+'title']) {
+				addWorkHistoryItem(candidate.id,sourceData['workhistoryitem'+i+'title'],sourceData['workhistoryitem'+i+'role'],sourceData['workhistoryitem'+i+'company'],sourceData['workhistoryitem'+i+'description'],sourceData['workhistoryitem'+i+'location'],sourceData['workhistoryitem'+i+'executive'],sourceData['workhistoryitem'+i+'executivelinkedinid'],sourceData['workhistoryitem'+i+'startdate'],sourceData['workhistoryitem'+i+'enddate'],function(err){
+					if (err) s.emit('soft-error', err, sourceData);
+				});
+				++i;
+			}
+
+			var workedOnHighVolumeApps = (sourceData['workedonhigh-volumeapp']||'').trim().toLowerCase();
+			if (workedOnHighVolumeApps && workedOnHighVolumeApps != 'no' && workedOnHighVolumeApps != 'false') {
+				addMiscRoleFact(candidate.id,'worked_apps_volume_100k',function(err){
+					if (err) s.emit('soft-error', err, sourceData);
+				});
+			}
+
 		});
 
 	},function(){
@@ -89,6 +86,28 @@ module.exports = function(opts){
 	return s;
 }
 
+
+
+function addCandidateRoles(candidateId, roleDisplayNames, cb){
+	if (!Array.isArray(roleDisplayNames)) roleDisplayNames = [roleDisplayNames];
+	if (!roleDisplayNames.length) process.nextTick(cb);
+	var numToAdd = 0, numAdded = 0;
+	roleDisplayNames.forEach(function(roleDisplayName){
+		roleDisplayName = roleDisplayName.trim();
+		if (!roleDisplayName) return;
+		++numToAdd;
+		Roles.getByName(ut.makeUrlPathFriendlyName(roleDisplayName),function(err,role){
+			Candidates.addRole(candidateId, role.id, function(err){
+				if (err) {
+					cb(err);
+					cb = function(){}
+				}
+				if (++numAdded == numToAdd)
+					cb();
+			});
+		});
+	});
+}
 
 
 function addSkills(candidateId, skills, cb) {
