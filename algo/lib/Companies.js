@@ -75,6 +75,7 @@ function createDto(data){
 		,updated: null
 	}, data);
 	//dto.id = +dto.id;
+	//dto.rating = dto.rating === null ? null : +dto.rating;
 	//dto.created = +dto.created;
 	//dto.updated = +dto.updated;
 	return dto;
