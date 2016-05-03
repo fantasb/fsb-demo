@@ -211,6 +211,7 @@ Scoring = {
 						return;
 					}
 					score.debug.push('Has skill fundamental: '+row.display_name);
+					//score.score += row.importance_level;
 					score.score += 1;
 				});
 				//score.score = (score.score && data.length) ? score.score*100/data.length : 0;
