@@ -57,7 +57,7 @@ module.exports = function(opts){
 
 			var i=1;
 			while (sourceData['degree'+i+'field']) {
-				addDegree(candidate.id,sourceData['degree'+i+'name'],sourceData['degree'+i+'field'],sourceData['degree'+i+'institution'],sourceData['degree'+i+'description'],sourceData['degree'+i+'startdate'],sourceData['degree'+i+'enddate'],function(err){
+				addDegree(candidate.id,sourceData['degree'+i+'name'],sourceData['degree'+i+'field'],sourceData['degree'+i+'roles'],sourceData['degree'+i+'institution'],sourceData['degree'+i+'description'],sourceData['degree'+i+'startdate'],sourceData['degree'+i+'enddate'],function(err){
 					if (err) s.emit('soft-error', err, sourceData);
 				});
 				++i;
@@ -90,7 +90,6 @@ module.exports = function(opts){
 
 function addCandidateRoles(candidateId, roleDisplayNames, cb){
 	if (!Array.isArray(roleDisplayNames)) roleDisplayNames = [roleDisplayNames];
-	if (!roleDisplayNames.length) process.nextTick(cb);
 	var numToAdd = 0, numAdded = 0;
 	roleDisplayNames.forEach(function(roleDisplayName){
 		roleDisplayName = roleDisplayName.trim();
@@ -107,6 +106,7 @@ function addCandidateRoles(candidateId, roleDisplayNames, cb){
 			});
 		});
 	});
+	if (!numToAdd) process.nextTick(cb);
 }
 
 
@@ -126,8 +126,7 @@ function addSkills(candidateId, skills, cb) {
 			});
 		});
 	});
-	if (numToAdd == 0)
-		cb();
+	if (!numToAdd) process.nextTick(cb);
 	function error(msg){
 		cb(msg);
 		cb = function(){}
@@ -135,9 +134,10 @@ function addSkills(candidateId, skills, cb) {
 }
 
 
-function addDegree(candidateId, degreeName, degreeField, institutionName, description, startDate, endDate, cb) {
+function addDegree(candidateId, degreeName, degreeField, historyItemRoleDisplayNames, institutionName, description, startDate, endDate, cb) {
 	degreeName = (degreeName||'').trim();
 	degreeField = (degreeField||'').trim();
+	historyItemRoleDisplayNames = (historyItemRoleDisplayNames||'').split(',');
 	institutionName = (institutionName||'').trim();
 	description = (description||'').trim();
 	startDate = formatDateForDb(parseDateInput(startDate));
@@ -159,7 +159,24 @@ function addDegree(candidateId, degreeName, degreeField, institutionName, descri
 	function next(){
 		Education.createDegreeType(degreeName,degreeField,function(err,degreeType){
 			if (err) return error(err);
-			Education.addHistoryItem(candidateId, degreeType.id, institution&&institution.id, description, startDate, endDate, cb)
+			Education.addHistoryItem(candidateId, degreeType.id, institution&&institution.id, description, startDate, endDate, function(err,historyItem){
+				if (err) return error(err);
+				var numToAdd = 0, numAdded = 0;
+				historyItemRoleDisplayNames.forEach(function(roleDisplayName){
+					roleDisplayName = roleDisplayName.trim();
+					if (!roleDisplayName) return;
+					++numToAdd;
+					Roles.getByName(ut.makeUrlPathFriendlyName(roleDisplayName),function(err,role){
+						if (err) return error(err);
+						Education.addHistoryItemRole(historyItem.id,role.id,function(err){
+							if (err) return error(err);
+							if (++numAdded == numToAdd)
+								cb();
+						});
+					});
+				});
+				if (!numToAdd) cb();
+			})
 		})
 	}
 

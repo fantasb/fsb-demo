@@ -1,5 +1,8 @@
 /*
-	Currently runs through all "visible" candidates and scores each
+Currently runs through all "visible" candidates and scores each
+
+node ./algo/bin/score_candidates.js
+node ./algo/bin/score_candidates.js --candidateId=1
 */
 
 var argv = require('minimist')(process.argv.slice(2))
@@ -27,9 +30,12 @@ getAllCandidates(function(err,candidates){
 function getAllCandidates(cb){
 	var con = db()
 		,q = 'select id,name from candidates where visible=1'
-		//,q = 'select id,name from candidates where visible=1 and id=1'
 		,p = []
 	;
+	if (argv.candidateId) {
+		q += ' and id=?';
+		p.push(argv.candidateId);
+	}
 	con.query(q,p,function(err,data){
 		cb(err,data);
 		con.end();

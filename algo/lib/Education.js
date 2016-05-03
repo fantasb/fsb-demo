@@ -119,10 +119,28 @@ module.exports.createDegreeType = function(name,field,cb){
 	});
 }
 
+var getHistoryItemById = module.exports.getHistoryItemById = function(id,cb){
+	var con = db()
+		,q = 'select * from education_history_items where id=?'
+		,p = [id]
+	;
+
+	con.query(q,p,function(err,data){
+		con.end();
+		if (!err && !data[0]) {
+			err = 'Cannot find Education History Item with id '+id;
+			err.code = 404;
+		}
+		if (err) {
+			return cb(err);
+		}
+		cb(false, createEducationHistoryItemDto(data[0]));
+	});
+}
 
 module.exports.addHistoryItem = function(candidateId, degreeTypeId, institutionId, description, startTime, endTime, cb){
 	var con = db()
-		,q = 'insert into education_history_items (candidate_id,degree_type_id,education_institution_id,description,start_time,end_time,created,updated) values (?,?,?,?,?,?,?,?) on duplicate key update education_institution_id=?,description=?,end_time=?,updated=?'
+		,q = 'insert into education_history_items (candidate_id,degree_type_id,education_institution_id,description,start_time,end_time,created,updated) values (?,?,?,?,?,?,?,?) on duplicate key update education_institution_id=?,description=?,end_time=?,updated=?,id=LAST_INSERT_ID(id)'
 		,now = Math.floor(Date.now()/1000)
 		,p = [candidateId,degreeTypeId,institutionId,description,startTime,endTime,now,now, institutionId,description,endTime,now]
 	;
@@ -132,10 +150,27 @@ module.exports.addHistoryItem = function(candidateId, degreeTypeId, institutionI
 		if (err) {
 			return cb(err);
 		}
-		cb(false,data);
+		getHistoryItemById(data.insertId,cb);
 	});
 }
 
+
+module.exports.addHistoryItemRole = function(historyItemId, roleId, cb){
+	var con = db()
+		,q = 'insert ignore into education_history_item_roles (education_history_item_id,role_id,created) values (?,?,?)'
+		,now = Math.floor(Date.now()/1000)
+		,p = [historyItemId,roleId,now]
+	;
+
+	con.query(q,p,function(err,data){
+		con.end();
+		if (err) {
+			return cb(err);
+		}
+
+		cb(false,data);
+	});
+}
 
 
 function createEducationInstitutionDto(data){
@@ -166,4 +201,17 @@ function createDegreeTypeDto(data){
 	//dto.created = +dto.created;
 	return dto;
 }
+
+function createEducationHistoryItemDto(data){
+	var dto = sext({
+		education_history_item_id: null
+		,role_id: null
+		,created: null
+	}, data);
+	//dto.education_history_item_id = +dto.education_history_item_id;
+	//dto.role_id = +dto.role_id;
+	//dto.created = +dto.created;
+	return dto;
+}
+
 
