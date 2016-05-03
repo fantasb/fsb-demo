@@ -26,7 +26,8 @@ getAllCandidates(function(err,candidates){
 
 function getAllCandidates(cb){
 	var con = db()
-		,q = 'select id,name from candidates where visible=1 and id=1'
+		,q = 'select id,name from candidates where visible=1'
+		//,q = 'select id,name from candidates where visible=1 and id=1'
 		,p = []
 	;
 	con.query(q,p,function(err,data){
