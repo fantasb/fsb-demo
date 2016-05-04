@@ -57,7 +57,7 @@ CompanyFacts.create(argv.factName, argv.factDisplay, argv.factDescription, funct
 			console.log('Worksheet parse fail: '+JSON.stringify(data), err);
 			++stats.worksheetParseFail;
 		})
-	.pipe(findCompany(argv.columnName)) // creates company if no match
+	.pipe(findCompany(argv.columnName,true)) // creates company if no match
 		.on('company-find-fail',function(data,err){
 			console.log('Company find fail: '+JSON.stringify(data), err);
 			++stats.companyFindFail;

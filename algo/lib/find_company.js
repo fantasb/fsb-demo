@@ -10,7 +10,7 @@ var through = require('through')
 ,Companies = require('../lib/Companies.js')
 ;
 
-module.exports = function(nameKey){
+module.exports = function(nameKey,createIfNotExists){
 	var s = through(function(sourceData){
 		var companyDisplayName = (sourceData[nameKey]||'').trim();
 		if (!companyDisplayName) {
@@ -19,11 +19,15 @@ module.exports = function(nameKey){
 
 		var companyName = ut.makeUrlPathFriendlyName(companyDisplayName);
 		Companies.getByName(companyName,function(err,data){
+			// we found the company, attach and pass downstream
 			if (!err) {
 				sourceData.company = data;
 				return s.queue(sourceData);
 			}
-			if (err.code != 404) {
+
+			// we have an error
+			// 	if 404 only fail if we arent supposed to create one
+			if (err.code != 404 || !createIfNotExists) {
 				return s.emit('company-find-fail', {display_name:companyDisplayName}, err);
 			}
 

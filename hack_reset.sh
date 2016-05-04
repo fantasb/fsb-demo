@@ -23,6 +23,7 @@ if [ "$mysqlPass" ]; then sqlCreds="$sqlCreds -p'$mysqlPass'"; fi
 
 node ./algo/bin/import.misc_company_facts.js --factName=builtinla_top_100_tech --factDisplay='BuiltInLA Top 100 Tech Companies' --factDescription='Featured in http://www.builtinla.com/2015/08/05/top-100-tech-companies-la' --sheetId=1g1t5AjeqfpB8D0W87HPGgqHYFXlyGQIqTaRuDvUt-Mc --worksheet=1 --columnName='all'
 node ./algo/bin/import.candidates.js --sheetId=1g1t5AjeqfpB8D0W87HPGgqHYFXlyGQIqTaRuDvUt-Mc --worksheet=0
+node ./algo/bin/import.company_ratings.js --sheetId=1499_iK33GtDXcwLLnfzRyCAOVtHjP7_PcpNzoGgGDxw --worksheet=0
 
 (echo "use fsb;" && cat ./workspace/algo_skill_fundamentals.sql) | mysql $sqlCreds
 

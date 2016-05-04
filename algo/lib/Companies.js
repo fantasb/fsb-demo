@@ -63,6 +63,27 @@ module.exports.create = function(name,displayName,description,cb){
 	});
 }
 
+var updateById = module.exports.updateById = function(id,updateData,cb){
+	var con = db()
+		,q = 'update companies set ? where id=?'
+		,p = [updateData, id]
+	;
+	con.query(q,p,function(err,data){
+		con.end();
+		if (err) {
+			return cb(err);
+		}
+		getById(id,cb);
+	});
+}
+
+module.exports.updateByName = function(name,updateData,cb){
+	getByName(name,function(err,item){
+		if (err) return cb(err);
+		updateById(item.id,updateData,cb);
+	});
+}
+
 
 function createDto(data){
 	var dto = sext({
