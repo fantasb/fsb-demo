@@ -37,8 +37,8 @@ insert into degree_types (name, field, created) values
 insert into algo_factors (name,display_name,description,weight,visible,display_order,created,updated) values
 ('language_skills', 'Language Skills', '[ex]Fluent in English[/ex]', 0, 0, 0, @now, @now),
 ('role_skill_fundamentals', 'Skill Fundamentals', 'Experience with technologies, applications, etc common to the Role [ex]Objective C, Swift, RESTful Apis, Agile...[/ex]', 40, 1, 100, @now, @now),
-('role_experience', 'Years of Work Experience', 'Measure of time working directly within the Role [ex]Years worked as an iOS Developer[/ex]', 15, 1, 101, @now, @now),
-('misc_role_facts', 'Role-Specific Achievements', '[ex]Apps in App Store[/ex]', 15, 1, 102, @now, @now),
+('role_experience', 'Years of Work Experience', 'Measure of time working directly within the Role [ex]Years worked as an iOS Developer[/ex]', 15, 1, 102, @now, @now),
+('misc_role_facts', 'Role-Specific Achievements', '[ex]Apps in App Store[/ex]', 20, 1, 101, @now, @now),
 ('basic_education', 'Basic Education', 'Has earned a Bachelor\'s degree or equivalent', 0, 0, 0, @now, @now),
 ('role_education', 'Role Education', 'Further education specific to the Role [ex]Masters in Computer Science[/ex]', 5, 1, 105, @now, @now),
 ('current_company', 'Current Company', 'Currently working at a notable company [ex]Apple[/ex]', 10, 1, 103, @now, @now),
