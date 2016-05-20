@@ -200,6 +200,18 @@ function addWorkHistoryItem(candidateId, title, roleDisplayName, companyDisplayN
 
 	if (!(title && startDate)) return;
 
+	var numWaiting = 3
+	function next(){
+		if (--numWaiting == 0) {
+			Candidates.addWorkHistoryItem(candidateId, title, description, startDate, endDate, company&&company.id, executive&&executive.id, role&&role.id, cb);
+		}
+	}
+
+	function error(msg){
+		cb(msg);
+		cb = function(){}
+	}
+
 	var role;
 	if (roleDisplayName) {
 		// require role to already exist...
@@ -238,17 +250,6 @@ function addWorkHistoryItem(candidateId, title, roleDisplayName, companyDisplayN
 		next();
 	}
 
-	var numWaiting = 3
-	function next(){
-		if (--numWaiting == 0) {
-			Candidates.addWorkHistoryItem(candidateId, title, description, startDate, endDate, company&&company.id, executive&&executive.id, role&&role.id, cb);
-		}
-	}
-
-	function error(msg){
-		cb(msg);
-		cb = function(){}
-	}
 }
 
 
