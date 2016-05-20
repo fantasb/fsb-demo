@@ -8,7 +8,7 @@ Instructions
 (4) Copy + Paste row into Google Spreadsheet
 (5) Apply the Format Painter tool, or we will have merged cells
 (6) Review company names, e.g. "Tinder, Inc" > "Tinder"
-(6) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Executives
+(6) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Work History Item Roles, Executives
 
 To Do
 	- If using as module instead of hack, replace ref to jQuery with local copy or in-house parser
