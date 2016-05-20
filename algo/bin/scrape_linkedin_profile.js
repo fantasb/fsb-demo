@@ -3,10 +3,11 @@ Temp hack script to scrape a LinkedIn profile and output in format ready for con
 
 Instructions
 (1) Create session cookie file, li_at=AQEDA...; in algo/cookie.linkedin.com
-(2) Run node ./bin/scrape_linkedin_profile.js LINKEDIN_USERNAME
+(2) Run `node ./bin/scrape_linkedin_profile.js LINKEDIN_USERNAME -c`
 (3) Open output in Excel
 (4) Copy + Paste row into Google Spreadsheet
 (5) Apply the Format Painter tool, or we will have merged cells
+(6) Review company names, e.g. "Tinder, Inc" > "Tinder"
 (6) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Executives
 
 To Do
@@ -18,6 +19,18 @@ To Do
 	Failed: Tried prepending UTF8 Byte Order Mark (\ufeff), Excel treated it as text
 	Success: Convert file to WINDOWS-1252 after saving
 		Re: http://stackoverflow.com/questions/6588068/which-encoding-opens-csv-files-correctly-with-excel-on-both-mac-and-windows
+
+node ./bin/scrape_linkedin_profile.js pixel4
+node ./bin/scrape_linkedin_profile.js trianna-brannon-a0943123 -a
+node ./bin/scrape_linkedin_profile.js dbachrach -a
+node ./bin/scrape_linkedin_profile.js chrisozenne -a
+node ./bin/scrape_linkedin_profile.js jamesajhar -a
+node ./bin/scrape_linkedin_profile.js hemanth-prasad-a2366511 -a
+node ./bin/scrape_linkedin_profile.js marcotolman -a
+node ./bin/scrape_linkedin_profile.js chandlerdea -a
+node ./bin/scrape_linkedin_profile.js chadtimmerman -a
+node ./bin/scrape_linkedin_profile.js stkochan -a -c
+
 */
 
 var argv = require('minimist')(process.argv.slice(2))
@@ -30,6 +43,8 @@ var argv = require('minimist')(process.argv.slice(2))
 ;
 
 var lid = argv._[0] || argv.lid
+,appendToOutputCsv = argv.a || false // instead of creating a new one
+,windowsAnsiEncoding = argv.c || false // cuz we only want to convert the last one when appending
 
 if (!lid) {
 	procError('Please supply an lid');
@@ -162,20 +177,30 @@ function printEntry(entry){
 	var writeTo = __dirname+'/../~scrape_linkedin_profile.out.csv'
 		,csvHeaders = []
 		,csvCols = []
+		,rows = []
 	Object.keys(entry).forEach(function(k){
 		csvHeaders.push(k)
 		csvCols.push(entry[k])
 	})
-	csvStringify([csvHeaders,csvCols],function(err,csvStr){
+	if (!appendToOutputCsv) rows.push(csvHeaders);
+	rows.push(csvCols);
+	csvStringify(rows,function(err,csvStr){
 		if (err) return procError(err);
+		console.log(csvStr);
 		// #encodingIssue
 		//fs.writeFile(writeTo,'\ufeff'+csvStr,{encoding:'utf8'},function(err){ // \ufeff prepended as pseudo byte order mark to notify excel this is utf8
-		fs.writeFile(writeTo,csvStr,{encoding:'utf8'},function(err){
+		fs[appendToOutputCsv?'appendFile':'writeFile'](writeTo,csvStr,{encoding:'utf8'},function(err){
 			if (err) return procError(err);
 			//console.log('output written to '+writeTo);
 			console.log('\nopen -a"/Applications/Microsoft Office 2011/Microsoft Excel.app" "'+writeTo+'"\n')
 			// #encodingIssue hack
-			require('child_process').exec('iconv -f UTF-8 -t WINDOWS-1252 "'+writeTo+'" > "'+writeTo+'~" && mv "'+writeTo+'~" "'+writeTo+'"');
+			if (windowsAnsiEncoding) {
+				// Note: -c added to skip unencodable chars, can instead replace them with a specific char with --unicode-subst=REPLACE_WITH_THIS
+				// using semicolon instead of && because i was getting a command failed error when -c came into play, even though the conversion appears to have worked
+				require('child_process').exec('iconv -c -f UTF-8 -t WINDOWS-1252 "'+writeTo+'" > "'+writeTo+'~"; mv "'+writeTo+'~" "'+writeTo+'"',function(err,data){
+					if (err) return procError(err);
+				});
+			}
 		});
 	});
 }
