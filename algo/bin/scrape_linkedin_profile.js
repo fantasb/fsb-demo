@@ -6,7 +6,8 @@ Instructions
 (2) Run node ./bin/scrape_linkedin_profile.js LINKEDIN_USERNAME
 (3) Open output in Excel
 (4) Copy + Paste row into Google Spreadsheet
-(5) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Executives
+(5) Apply the Format Painter tool, or we will have merged cells
+(6) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Executives
 
 To Do
 	- If using as module instead of hack, replace ref to jQuery with local copy or in-house parser
@@ -85,7 +86,7 @@ getSessionCookie(function(err,sessionCookie){
 				for (i=0;i<10;++i) { // limit to 10 for now
 					$sec = window.$('#background-experience .section-item:eq('+i+')');
 					n = i+1;
-					entry['Work History Item #'+n+' Company'] = $sec[0] && $sec.find('h5:eq(1)').text().trim();
+					entry['Work History Item #'+n+' Company'] = $sec[0] && $sec.find('h4:eq(0)').next('h5:eq(0)').text().trim(); // match title, then next()
 					entry['Work History Item #'+n+' Role'] = null; // #manual
 					entry['Work History Item #'+n+' Title'] = $sec[0] && $sec.find('h4:eq(0)').text().trim();
 					entry['Work History Item #'+n+' Executive'] = null; // #manual
