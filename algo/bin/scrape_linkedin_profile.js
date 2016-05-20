@@ -6,7 +6,7 @@ Instructions
 (2) Run `node ./bin/scrape_linkedin_profile.js LINKEDIN_USERNAME -c`
 (3) Open output in Excel
 (4) Copy + Paste row into Google Spreadsheet
-(5) Apply the Format Painter tool, or we will have merged cells
+(5) Select all and unmerge cells. DO NOT use format painter or you can lose your dates on Work History Items #4+
 (6) Review company names, e.g. "Tinder, Inc" > "Tinder"
 (6) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Work History Item Roles, Executives
 
