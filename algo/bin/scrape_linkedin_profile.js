@@ -166,7 +166,7 @@ function translateDate(inStr){
 	if (check == 0 || isNaN(check))
 		return null;
 	// require format "March 2015" or "2012" for now; ingester should ignore entries with a null start_dates
-	if (/^[a-zA-Z]\s+[0-9]{4}$/.test(inStr))
+	if (/^[a-zA-Z]+\s+[0-9]{4}$/.test(inStr))
 		return ut.padZ(d.getMonth()+1)+'/01/'+d.getFullYear()
 	if (/^[0-9]{4}$/.test(inStr))
 		return inStr
