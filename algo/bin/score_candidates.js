@@ -1,8 +1,8 @@
 /*
 Currently runs through all "visible" candidates and scores each
 
-node ./algo/bin/score_candidates.js
-node ./algo/bin/score_candidates.js --candidateId=1
+node ./bin/score_candidates.js
+node ./bin/score_candidates.js --candidateId=1
 */
 
 var argv = require('minimist')(process.argv.slice(2))
