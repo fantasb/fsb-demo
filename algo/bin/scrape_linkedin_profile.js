@@ -1,17 +1,16 @@
 /*
 Temp hack script to scrape a LinkedIn profile and output in format ready for consumption by import.candidates.js
 
+Instructions
+(1) Create session cookie file, li_at=AQEDA...; in algo/cookie.linkedin.com
+(2) Run node ./bin/scrape_linkedin_profile.js LINKEDIN_USERNAME
+(3) Open output in Excel
+(4) Copy + Paste row into Google Spreadsheet
+(5) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Executives
+
 To Do
-	- Fix encoding issue #encodingIssue
 	- If using as module instead of hack, replace ref to jQuery with local copy or in-house parser
 	- If using as module instead of hack, consider replacing jsdom altogether; sux memory
-
-node ./bin/scrape_linkedin_profile.js pixel4
-
-Session Cookie: In order to view the full profile, create a file called "cookie.linkedin.com" in algo/
-	e.g.: li_at=AQEDA...;
-	Test: node ./bin/scrape_linkedin_profile.js pixel4 | grep profile-skills
-	
 
 #encodingIssue: When opening output in Excel, some characters are encoded improperly (e.g. "•" => "â€¢". Haven't resolved this yet
 	Failed: Tried encoding as ucs2 (utf16 JS subset) per recommendation, but excel wont open it
@@ -50,7 +49,7 @@ getSessionCookie(function(err,sessionCookie){
 				if (err) return procError(err);
 				
 				// BEGIN parsing
-				var entry = {}
+				var entry = {}, i, n, $sec
 
 				entry['Name'] = window.$('#name-container .full-name:eq(0)').text().trim();
 				entry['Roles'] = null; // #manual
@@ -72,30 +71,30 @@ getSessionCookie(function(err,sessionCookie){
 				});
 				entry['Skills'] = entry['Skills'].join(',');
 
-				window.$('#background-education .section-item').each(function(i,sec){
-					if (i == 2) return false; // limit to 2 for now
-					var $sec = window.$(sec), n = i+1
-					entry['Degree #'+n+' Institution'] = $sec.find('.summary:eq(0)').text().trim();
-					entry['Degree #'+n+' Name'] = $sec.find('.degree:eq(0)').text().trim().replace(/,$/,'');
-					entry['Degree #'+n+' Field'] = $sec.find('.major:eq(0)').text().trim();
+				for (i=0;i<2;++i) { // limit to 2 for now
+					$sec = window.$('#background-education .section-item:eq('+i+')');
+					n = i+1;
+					entry['Degree #'+n+' Institution'] = $sec[0] && $sec.find('.summary:eq(0)').text().trim();
+					entry['Degree #'+n+' Name'] = $sec[0] && $sec.find('.degree:eq(0)').text().trim().replace(/,$/,'');
+					entry['Degree #'+n+' Field'] = $sec[0] && $sec.find('.major:eq(0)').text().trim();
 					entry['Degree #'+n+' Roles'] = null; // #manual
-					entry['Degree #'+n+' Start Date'] = translateDate($sec.find('.education-date:eq(0) time:eq(0)').text());
-					entry['Degree #'+n+' End Date'] = translateDate($sec.find('.education-date:eq(0) time:eq(1)').text().replace(/^\s*–\s*/,''));
-				});
+					entry['Degree #'+n+' Start Date'] = $sec[0] && translateDate($sec.find('.education-date:eq(0) time:eq(0)').text());
+					entry['Degree #'+n+' End Date'] = $sec[0] && translateDate($sec.find('.education-date:eq(0) time:eq(1)').text().replace(/^\s*–\s*/,''));
+				}
 
-				window.$('#background-experience .section-item').each(function(i,sec){
-					if (i == 10) return false; // limit to 10 for now
-					var $sec = window.$(sec), n = i+1
-					entry['Work History Item #'+n+' Company'] = $sec.find('h5:eq(1)').text().trim();
+				for (i=0;i<10;++i) { // limit to 10 for now
+					$sec = window.$('#background-experience .section-item:eq('+i+')');
+					n = i+1;
+					entry['Work History Item #'+n+' Company'] = $sec[0] && $sec.find('h5:eq(1)').text().trim();
 					entry['Work History Item #'+n+' Role'] = null; // #manual
-					entry['Work History Item #'+n+' Title'] = $sec.find('h4:eq(0)').text().trim();
+					entry['Work History Item #'+n+' Title'] = $sec[0] && $sec.find('h4:eq(0)').text().trim();
 					entry['Work History Item #'+n+' Executive'] = null; // #manual
 					entry['Work History Item #'+n+' Executive LinkedIn ID'] = null; // #manual
-					entry['Work History Item #'+n+' Start Date'] = translateDate($sec.find('.experience-date-locale:eq(0) time:eq(0)').text());
-					entry['Work History Item #'+n+' End Date'] = translateDate($sec.find('.experience-date-locale:eq(0) time:eq(1)').text());
-					entry['Work History Item #'+n+' Description'] = $sec.find('.description:eq(0)').text().trim();
-					entry['Work History Item #'+n+' Location'] = $sec.find('.experience-date-locale:eq(0) .locality:eq(0)').text().trim();
-				});
+					entry['Work History Item #'+n+' Start Date'] = $sec[0] && translateDate($sec.find('.experience-date-locale:eq(0) time:eq(0)').text());
+					entry['Work History Item #'+n+' End Date'] = $sec[0] && translateDate($sec.find('.experience-date-locale:eq(0) time:eq(1)').text());
+					entry['Work History Item #'+n+' Description'] = $sec[0] && $sec.find('.description:eq(0)').text().trim();
+					entry['Work History Item #'+n+' Location'] = $sec[0] && $sec.find('.experience-date-locale:eq(0) .locality:eq(0)').text().trim();
+				}
 
 				// END parsing
 
@@ -154,7 +153,7 @@ function translateDate(inStr){
 	if (/^[a-zA-Z]\s+[0-9]{4}$/.test(inStr))
 		return ut.padZ(d.getMonth()+1)+'/01/'+d.getFullYear()
 	if (/^[0-9]{4}$/.test(inStr))
-		return d.getFullYear()
+		return inStr
 	return null;
 }
 
@@ -173,7 +172,7 @@ function printEntry(entry){
 		fs.writeFile(writeTo,csvStr,{encoding:'utf8'},function(err){
 			if (err) return procError(err);
 			//console.log('output written to '+writeTo);
-			console.log('open -a"/Applications/Microsoft Office 2011/Microsoft Excel.app" "'+writeTo+'"')
+			console.log('\nopen -a"/Applications/Microsoft Office 2011/Microsoft Excel.app" "'+writeTo+'"\n')
 			// #encodingIssue hack
 			require('child_process').exec('iconv -f UTF-8 -t WINDOWS-1252 "'+writeTo+'" > "'+writeTo+'~" && mv "'+writeTo+'~" "'+writeTo+'"');
 		});
