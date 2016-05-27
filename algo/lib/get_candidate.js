@@ -10,8 +10,8 @@ var db = require('../lib/db.mysql.js')
 
 module.exports = function(candidateId,cb){
 	var con = db()
-		//,q = 'select * from candidates c left outer join work_history_items whi on c.id=whi.candidate_id where c.id=? order by whi.start_time desc'
-		,q = 'select c.*,whi.*,co.name as company_name,co.display_name as company_display_name from candidates c left outer join work_history_items whi on c.id=whi.candidate_id left outer join companies co on co.id=whi.company_id where c.id=? order by whi.start_time desc'
+		// c.* should be the last .* so it keeps id
+		,q = 'select whi.*,c.*,co.name as company_name,co.display_name as company_display_name from candidates c left outer join work_history_items whi on c.id=whi.candidate_id left outer join companies co on co.id=whi.company_id where c.id=? order by whi.start_time desc'
 		,p = [candidateId]
 	;
 	con.query(q,p,function(err,data){
