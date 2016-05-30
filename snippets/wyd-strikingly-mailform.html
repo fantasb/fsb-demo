@@ -1,0 +1,20 @@
+
+<!-- BEGIN transform mail links to use wufoo
+github.com/fantasb/fsb-demo/snippets/wyd-strikingly-mailform.html
+-->
+<script>
+window.jQuery(function($){
+	var checkForElementTimeout = setInterval(function(){
+		if (transformLinks().length)
+			clearInterval(checkForElementTimeout);
+	},600)
+	function transformLinks(){
+		return $('a[href="mailto:kent@wydagency.com"]').attr('href','#').bind('click',function(e){
+			e.preventDefault();
+			var $pbtn = $(this).parents('.s-button-group:first')
+			$pbtn.html('<iframe class="wufoo-form-container" height="437" allowtransparency="true" frameborder="0" scrolling="no" style="width:100%;border:none" src="https://ranktt.wufoo.com/embed/r1kqrhof0tg44wq/def/embedKey=r1kqrhof0tg44wq864749"></iframe>');
+		});
+	}
+});
+</script>
+<!-- END transform mail links to use wufoo -->
