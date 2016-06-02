@@ -2,6 +2,9 @@ var cp = require('child_process').spawn
 ,sext = require('sext')
 ,fs = require('fs')
 ,path = require('path')
+,Url = require('url')
+//,request = require('request')
+,request = require('hyperquest')
 ,trimRe = /(^\s+)|(\s+$)/g
 ,trimConsecutiveRe = /(\s)+/g
 ,undef
@@ -127,12 +130,80 @@ module.exports.dateDiff = function(d0,d1){
 	return str.join(', ');
 }
 
+module.exports.escapeRegEx = function(str){
+	// adds slashes to regex control chars
+	return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 
 module.exports.makeUrlPathFriendlyName = function(displayName){
 	return encodeURIComponent(displayName.toLowerCase().replace(/ +/g,'-'));
 }
 
+module.exports.getSessionCookie = function(domainKey,cb){
+	fs.readFile(__dirname+'/../cookie.'+domainKey,function(err,sessionCookie){
+		if (err && err.code != 'ENOENT')
+			return cb(err)
+		cb(false, sessionCookie ? sessionCookie.toString() : null)
+	});
+}
+
+module.exports.normalizeUrl = function(url,contextUrl){
+	url = (typeof url == 'string' ? url : '').trim()
+	if (!url || url == '#' || url.toLowerCase().indexOf('javascript:') == 0 || url.toLowerCase().indexOf('mailto:') == 0)
+		return null;
+	contextUrl = typeof contextUrl == 'string' ? Url.parse(contextUrl) : contextUrl
+	if (url[0] == '/') // /path/to/mypage
+		return contextUrl.protocol+'//'+contextUrl.hostname+(contextUrl.port?':'+contextUrl.port:'')+url
+	if (!/^https?:/.test(url)) // path/to/relative/page
+		return contextUrl.protocol+'//'+contextUrl.hostname+(contextUrl.port?':'+contextUrl.port:'')+contextUrl.pathname+url
+	return url
+}
+
+module.exports.simpleUrlGet = function(opts,cb){
+	// BEGIN backwards compat
+	if (typeof arguments[0] == 'string') {
+		opts = {
+			url: arguments[0]
+			,headers: typeof arguments[1] == 'object' ? arguments[1] : {}
+		}
+		cb = typeof arguments[1] == 'function' ? arguments[1] : arguments[2]
+	}
+	// END backwards compat
+	opts = sext({
+		url: null
+		,headers: {}
+		,followRedirects: 0
+	},opts)
+
+	var z = this, buf = new Buffer(0)
+	request.get(opts.url,{
+		headers: opts.headers
+	},function(err,res){
+		var redirectTo = shouldFollowRedirect(res)
+		if (redirectTo) {
+			opts.url = redirectTo
+			--opts.followRedirects
+			z.simpleUrlGet(opts,cb)
+			cb = function(){}
+		}
+	})
+	.on('data',function(data){
+		buf = Buffer.concat([buf,data]);
+	})
+	.on('end',function(){
+		cb(false,buf)
+		cb = function(){}
+	})
+	.on('error',function(err){
+		cb(err)
+		cb = function(){}
+	})
+
+	function shouldFollowRedirect(res){
+		return opts.followRedirects && res && (res.statusCode == 301 || res.statusCode == 302 || res.statusCode == 307 || res.statusCode == 308) && res.headers && res.headers.location
+	}
+}
 
 
 

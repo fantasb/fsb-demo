@@ -35,7 +35,6 @@ node ./bin/scrape_linkedin_profile.js stkochan -a -c
 
 var argv = require('minimist')(process.argv.slice(2))
 ,fs = require('fs')
-,request = require('hyperquest')
 //,request = require('request')
 ,jsdom = require('jsdom')
 ,csvStringify = require('csv-stringify')
@@ -52,9 +51,9 @@ if (!lid) {
 
 
 
-getSessionCookie(function(err,sessionCookie){
+ut.getSessionCookie('linkedin.com',function(err,sessionCookie){
 	if (err) return procError(err);
-	getUrl('https://www.linkedin.com/in/'+lid,{
+	ut.simpleUrlGet('https://www.linkedin.com/in/'+lid,{
 		cookie: sessionCookie
 	},function(err,res){
 		if (err) return procError(err);
@@ -126,37 +125,6 @@ getSessionCookie(function(err,sessionCookie){
 function procError(err){
 	console.log('ERROR',err);
 	process.exit();
-}
-
-function getSessionCookie(cb){
-	fs.readFile(__dirname+'/../cookie.linkedin.com',function(err,sessionCookie){
-		if (err && err.code != 'ENOENT')
-			return cb(err)
-		cb(false, sessionCookie ? sessionCookie.toString() : null)
-	});
-}
-
-function getUrl(url,headers,cb){
-	if (typeof headers == 'function') {
-		cb = headers
-		headers = {}
-	}
-
-	var buf = new Buffer(0)
-	request.get(url,{
-		headers: headers
-	})
-	.on('data',function(data){
-		buf = Buffer.concat([buf,data]);
-	})
-	.on('end',function(){
-		cb(false,buf)
-		cb = function(){}
-	})
-	.on('error',function(err){
-		cb(err)
-		cb = function(){}
-	})
 }
 
 function translateDate(inStr){
