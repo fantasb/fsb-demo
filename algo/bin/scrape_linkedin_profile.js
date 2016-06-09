@@ -21,16 +21,16 @@ To Do
 	Success: Convert file to WINDOWS-1252 after saving
 		Re: http://stackoverflow.com/questions/6588068/which-encoding-opens-csv-files-correctly-with-excel-on-both-mac-and-windows
 
-node ./bin/scrape_linkedin_profile.js pixel4 -i
-node ./bin/scrape_linkedin_profile.js trianna-brannon-a0943123 -i -a
-node ./bin/scrape_linkedin_profile.js dbachrach -i -a
-node ./bin/scrape_linkedin_profile.js chrisozenne -i -a
-node ./bin/scrape_linkedin_profile.js jamesajhar -i -a
-node ./bin/scrape_linkedin_profile.js hemanth-prasad-a2366511 -i -a
-node ./bin/scrape_linkedin_profile.js marcotolman -i -a
-node ./bin/scrape_linkedin_profile.js chandlerdea -i -a
-node ./bin/scrape_linkedin_profile.js chadtimmerman -i -a
-node ./bin/scrape_linkedin_profile.js stkochan -i -a -c
+node ./bin/scrape_linkedin_profile.js pixel4
+node ./bin/scrape_linkedin_profile.js trianna-brannon-a0943123 -a
+node ./bin/scrape_linkedin_profile.js dbachrach -a
+node ./bin/scrape_linkedin_profile.js chrisozenne -a
+node ./bin/scrape_linkedin_profile.js jamesajhar -a
+node ./bin/scrape_linkedin_profile.js hemanth-prasad-a2366511 -a
+node ./bin/scrape_linkedin_profile.js marcotolman -a
+node ./bin/scrape_linkedin_profile.js chandlerdea -a
+node ./bin/scrape_linkedin_profile.js chadtimmerman -a
+node ./bin/scrape_linkedin_profile.js stkochan -a -c
 
 */
 
@@ -40,98 +40,107 @@ var argv = require('minimist')(process.argv.slice(2))
 ,jsdom = require('jsdom')
 ,csvStringify = require('csv-stringify')
 ,ut = require('../lib/ut')
-,Candidates = require('../lib/Candidates')
 ;
 
 var lid = argv._[0] || argv.lid
 ,appendToOutputCsv = argv.a || false // instead of creating a new one
 ,windowsAnsiEncoding = argv.c || false // cuz we only want to convert the last one when appending
-,skipExistingLids = argv.i || false // skip linkedin ids already in our DB
 
 if (!lid) {
 	procError('Please supply an lid');
 }
-lid = lid.replace('https://www.linkedin.com/in/','') // allow for full url as input
+// DO NOT uncomment following line. this module should except exact lids
+//	e.g.: for okToProceedWithLid() to always work, also bad to change input id (scoping)
+//lid = (lid.match(/(https:\/\/www.linkedin.com\/in\/)?([^?#]+)\??.*?#?/)||[,,''])[2] // allow for full url as input
 
 
-okToProceedWithLid(lid,skipExistingLids,function(err,goodToGo,reason){
+ut.getSessionCookie('linkedin.com',function(err,sessionCookie){
 	if (err) return procError(err);
-	if (!goodToGo) {
-		return console.log('not continuing with lid '+lid, reason)
-	}
-	ut.getSessionCookie('linkedin.com',function(err,sessionCookie){
-		if (err) return procError(err);
-		ut.simpleUrlGet('https://www.linkedin.com/in/'+lid,{
+	ut.simpleUrlGet({
+		url: 'https://www.linkedin.com/in/'+lid
+		,headers: {
 			cookie: sessionCookie
-		},function(err,res){
-			if (err) return procError(err);
-			jsdom.env(
-				res.toString(),
-				['http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'],
-				function(err,window){
-					if (err) return procError(err);
-					
-					// BEGIN parsing
-					var entry = {}, i, n, $sec
+		}
+		,followRedirects: 1
+	},function(err,res){
+		if (err) return procError(err);
+		jsdom.env(
+			res.toString(),
+			['http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'],
+			function(err,window){
+				if (err) return procError(err);
+				
+				// BEGIN parsing
+				var entry = {}, i, n, $sec
 
-					entry['Name'] = window.$('#name-container .full-name:eq(0)').text().trim();
-					entry['Roles'] = null; // #manual
-					entry['Email'] = argv.email || null; // #manual
-					entry['Phone'] = argv.phone || null; // #manual
-					entry['LinkedIn Username'] = lid;
-					entry['LinkedIn Image Url'] = window.$('#top-card .profile-picture:first img:first').attr('src')
-					entry['Twitter Username'] = null; // #manual
-					entry['Facebook Username'] = null; // #manual
-					entry['Github Username'] = null; // #manual
-					entry['Worked on High-Volume App'] = null; // #manual
-					entry['Worked on High-Volume App - Details'] = null; // #manual
+				entry['Name'] = window.$('#name-container .full-name:eq(0)').text().trim();
+				entry['Roles'] = null; // #manual
+				entry['Email'] = argv.email || null; // #manual
+				entry['Phone'] = argv.phone || null; // #manual
+				entry['LinkedIn Username'] = lid;
+				entry['LinkedIn Image Url'] = window.$('#top-card .profile-picture:first img:first').attr('src')
+				entry['Twitter Username'] = null; // #manual
+				entry['Facebook Username'] = null; // #manual
+				entry['Github Username'] = null; // #manual
+				entry['Worked on High-Volume App'] = null; // #manual
+				entry['Worked on High-Volume App - Details'] = null; // #manual
 
-					entry['Skills'] = []
-					window.$('#profile-skills .skills-section:not(.compact-view):eq(0)').children().each(function(i,sec){
-						var skill = (window.$(sec).attr('data-endorsed-item-name')||'').trim().replace(/,/g,''); // comma is our delimiter :(
-						if (skill)
-							entry['Skills'].push(skill);
-					});
-					entry['Skills'] = entry['Skills'].join(',');
+				entry['Skills'] = []
+				window.$('#profile-skills .skills-section:not(.compact-view):eq(0)').children().each(function(i,sec){
+					var skill = (window.$(sec).attr('data-endorsed-item-name')||'').trim().replace(/,/g,''); // comma is our delimiter :(
+					if (skill)
+						entry['Skills'].push(skill);
+				});
+				entry['Skills'] = entry['Skills'].join(',');
 
-					for (i=0;i<2;++i) { // limit to 2 for now
-						$sec = window.$('#background-education .section-item:eq('+i+')');
-						n = i+1;
-						entry['Degree #'+n+' Institution'] = $sec[0] && $sec.find('.summary:eq(0)').text().trim();
-						entry['Degree #'+n+' Name'] = $sec[0] && $sec.find('.degree:eq(0)').text().trim().replace(/,$/,'');
-						entry['Degree #'+n+' Field'] = $sec[0] && $sec.find('.major:eq(0)').text().trim();
-						entry['Degree #'+n+' Roles'] = null; // #manual
-						entry['Degree #'+n+' Start Date'] = $sec[0] && translateDate($sec.find('.education-date:eq(0) time:eq(0)').text());
-						entry['Degree #'+n+' End Date'] = $sec[0] && translateDate($sec.find('.education-date:eq(0) time:eq(1)').text().replace(/^\s*–\s*/,''));
-					}
-
-					for (i=0;i<10;++i) { // limit to 10 for now
-						$sec = window.$('#background-experience .section-item:eq('+i+')');
-						n = i+1;
-						entry['Work History Item #'+n+' Company'] = $sec[0] && $sec.find('h4:eq(0)').next('h5:eq(0)').text().trim(); // match title, then next()
-						entry['Work History Item #'+n+' Role'] = null; // #manual
-						entry['Work History Item #'+n+' Title'] = $sec[0] && $sec.find('h4:eq(0)').text().trim();
-						entry['Work History Item #'+n+' Executive'] = null; // #manual
-						entry['Work History Item #'+n+' Executive LinkedIn ID'] = null; // #manual
-						entry['Work History Item #'+n+' Start Date'] = $sec[0] && translateDate($sec.find('.experience-date-locale:eq(0) time:eq(0)').text());
-						entry['Work History Item #'+n+' End Date'] = $sec[0] && translateDate($sec.find('.experience-date-locale:eq(0) time:eq(1)').text());
-						entry['Work History Item #'+n+' Description'] = $sec[0] && $sec.find('.description:eq(0)').text().trim();
-						entry['Work History Item #'+n+' Location'] = $sec[0] && $sec.find('.experience-date-locale:eq(0) .locality:eq(0)').text().trim();
-					}
-
-					// END parsing
-
-					console.log(entry);
-					printEntry(entry);
+				for (i=0;i<2;++i) { // limit to 2 for now
+					$sec = window.$('#background-education .section-item:eq('+i+')');
+					n = i+1;
+					entry['Degree #'+n+' Institution'] = $sec[0] && $sec.find('.summary:eq(0)').text().trim();
+					entry['Degree #'+n+' Name'] = $sec[0] && $sec.find('.degree:eq(0)').text().trim().replace(/,$/,'');
+					entry['Degree #'+n+' Field'] = $sec[0] && $sec.find('.major:eq(0)').text().trim();
+					entry['Degree #'+n+' Roles'] = null; // #manual
+					entry['Degree #'+n+' Start Date'] = $sec[0] && translateDate($sec.find('.education-date:eq(0) time:eq(0)').text());
+					entry['Degree #'+n+' End Date'] = $sec[0] && translateDate($sec.find('.education-date:eq(0) time:eq(1)').text().replace(/^\s*–\s*/,''));
 				}
-			);
-		})
-	});
-})
+
+				for (i=0;i<10;++i) { // limit to 10 for now
+					$sec = window.$('#background-experience .section-item:eq('+i+')');
+					n = i+1;
+					entry['Work History Item #'+n+' Company'] = $sec[0] && $sec.find('h4:eq(0)').next('h5:eq(0)').text().trim(); // match title, then next()
+					entry['Work History Item #'+n+' Role'] = null; // #manual
+					entry['Work History Item #'+n+' Title'] = $sec[0] && $sec.find('h4:eq(0)').text().trim();
+					entry['Work History Item #'+n+' Executive'] = null; // #manual
+					entry['Work History Item #'+n+' Executive LinkedIn ID'] = null; // #manual
+					entry['Work History Item #'+n+' Start Date'] = $sec[0] && translateDate($sec.find('.experience-date-locale:eq(0) time:eq(0)').text());
+					entry['Work History Item #'+n+' End Date'] = $sec[0] && translateDate($sec.find('.experience-date-locale:eq(0) time:eq(1)').text());
+					entry['Work History Item #'+n+' Description'] = $sec[0] && $sec.find('.description:eq(0)').text().trim();
+					entry['Work History Item #'+n+' Location'] = $sec[0] && $sec.find('.experience-date-locale:eq(0) .locality:eq(0)').text().trim();
+				}
+
+				// END parsing
+
+				//if (Math.random()-0.5 < 0) return procError('oh neeeeooo',lid)
+
+				if (!entry['Name']) return procError('Cannot find first name for '+lid+'.', 'May require login?')
+
+				console.log(entry);
+				printEntry(entry);
+			}
+		);
+	})
+});
 
 
 function procError(err){
-	console.log('ERROR',err);
+	//console.log('ERROR',err);
+	//process.stderr.write(Array.prototype.slice.call(arguments).join(' '));
+	//console.error.apply(console,arguments);
+	var out = [];
+	for (var i=0;i<arguments.length;++i) {
+		out.push(require('util').inspect(arguments[i]))
+	}
+	process.stderr.write(out.join(' '));
 	process.exit();
 }
 
@@ -147,23 +156,6 @@ function translateDate(inStr){
 	if (/^[0-9]{4}$/.test(inStr))
 		return inStr
 	return null;
-}
-
-function okToProceedWithLid(lid,skipExistingLids,cb){
-	if (!skipExistingLids) { // always proceed, good to go
-		return process.nextTick(function(){
-			cb(false,true)
-		})
-	}
-	Candidates.getByLinkedInId(lid,function(err,data){
-		if (err) {
-			if (err.code == 404) // candidate does not exist, good to go
-				cb(false, true)
-			else // we have legit error
-				cb(err)
-		}
-		cb(false,false,'candidate exists in db') // candidate exists, not good to go
-	})
 }
 
 function printEntry(entry){
