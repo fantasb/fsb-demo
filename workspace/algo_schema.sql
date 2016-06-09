@@ -14,6 +14,7 @@ create table candidates (
 	,linkedin_profile_id varchar(191) default null
 	,linkedin_img_url varchar(191) default null
 	,primary_email varchar(191) default null
+	,primary_phone varchar(32) default null -- open format: allow for country code and extensions etc
 	,visible tinyint(1) not null default 0
 	,created int not null
 	,updated int not null
@@ -22,6 +23,7 @@ create table candidates (
 	,unique key pk (linkedin_profile_id)
 	,index name_ (name)
 	,index primary_email_ (primary_email)
+	,index primary_phone_ (primary_phone)
 	,index visible_ (visible)
 	,index created_ (created)
 	,index updated_ (updated)

@@ -44,14 +44,21 @@ var getByLinkedInId = module.exports.getByLinkedInId = function(lid,cb){
 	});
 }
 
-module.exports.create = function(name,linkedInId,linkedInImgUrl,primaryEmail,visible,cb){
+module.exports.create = function(name,linkedInId,linkedInImgUrl,primaryEmail,primaryPhone,visible,cb){
 	visible = visible ? 1 : 0;
 
 	var con = db()
-		,q = 'insert into candidates (name,linkedin_profile_id,linkedin_img_url,primary_email,visible,created,updated) values (?,?,?,?,?,?,?) on duplicate key update name=?,linkedin_img_url=?,primary_email=?,visible=?,updated=?'
+		,q = 'insert into candidates (name,linkedin_profile_id,linkedin_img_url,primary_email,primary_phone,visible,created,updated) values (?,?,?,?,?,?,?,?) on duplicate key update name=?,linkedin_img_url=?,primary_email=?,primary_phone=?,visible=?,updated=?'
 		,now = Math.floor(Date.now()/1000)
-		,p = [name,linkedInId,linkedInImgUrl,primaryEmail,visible,now,now,name,linkedInImgUrl,primaryEmail,visible,now]
+		,p = [name,linkedInId,linkedInImgUrl,primaryEmail,primaryPhone,visible,now,now,name,linkedInImgUrl,primaryEmail,primaryPhone,visible,now]
 	;
+
+	if (!linkedInId) {
+		con.end()
+		return process.nextTick(function(){
+			cb('linkedInId required')
+		})
+	}
 
 	con.query(q,p,function(err,data){
 		con.end();
@@ -60,6 +67,20 @@ module.exports.create = function(name,linkedInId,linkedInImgUrl,primaryEmail,vis
 		}
 		//cb(false, createDto({ ... });
 		getByLinkedInId(linkedInId,cb);
+	});
+}
+
+module.exports.updateById = function(id,updateData,cb){
+	var con = db()
+		,q = 'update candidates set ? where id=?'
+		,p = [updateData, id]
+	;
+	con.query(q,p,function(err,data){
+		con.end();
+		if (err) {
+			return cb(err);
+		}
+		getById(id,cb);
 	});
 }
 
@@ -147,6 +168,7 @@ function createDto(data){
 		,linkedin_profile_id: null
 		,linkedin_img_url: null
 		,primary_email: null
+		,primary_phone: null
 		,visible: null
 		,created: null
 		,updated: null

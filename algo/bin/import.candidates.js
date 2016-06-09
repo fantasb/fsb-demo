@@ -2,7 +2,7 @@
 Input: Google spreadsheet with list of candidate data
 Input: handleExisting - ignore, append, replace
 What it does:
-	- 
+	- Imports data from https://docs.google.com/spreadsheets/d/1g1t5AjeqfpB8D0W87HPGgqHYFXlyGQIqTaRuDvUt-Mc
 
 node ./bin/import.candidates.js \
 --sheetId=1g1t5AjeqfpB8D0W87HPGgqHYFXlyGQIqTaRuDvUt-Mc \

@@ -31,13 +31,14 @@ module.exports = function(opts){
 			,candidateName = (sourceData.name||'').trim()
 			,candidateLinkedInImgUrl = (sourceData.linkedinimageurl||'').trim()
 			,candidatePrimaryEmail = (sourceData.email||'').trim()
+			,candidatePrimaryPhone = (sourceData.phone||'').trim()
 			,candidateRoleDisplayNames = (sourceData.roles||'').trim()
 		;
 		if (!(candidateLid && candidateName && candidateRoleDisplayNames)) {
 			return s.emit('candidate-fatal', 'missing LinkedIn Username, Name, or Roles field', sourceData);
 		}
 
-		Candidates.create(candidateName, candidateLid, candidateLinkedInImgUrl, candidatePrimaryEmail, 1, function(err,candidate){
+		Candidates.create(candidateName, candidateLid, candidateLinkedInImgUrl, candidatePrimaryEmail, candidatePrimaryPhone, 1, function(err,candidate){
 			if (err) return s.emit('candidate-fatal', err, sourceData);
 			// --- CANDIDATE CREATED
 
@@ -49,7 +50,7 @@ module.exports = function(opts){
 				Candidates.addEmail(candidate.id,candidatePrimaryEmail,'scrape',function(err){
 					if (err) s.emit('soft-error', err, sourceData);
 				});
-			}s
+			}
 
 			addSkills(candidate.id, (sourceData.skills||'').split(','),function(err){
 				if (err) s.emit('soft-error', err, sourceData);

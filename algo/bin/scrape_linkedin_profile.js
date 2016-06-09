@@ -11,6 +11,7 @@ Instructions
 (6) Enter #manuals: Roles, High-Volume Apps, Degree Roles, Work History Item Roles, Executives
 
 To Do
+	- Convert this to a lib module and update bin/scrape_linkedin_profiles.js to use lib instead of spawning new processes
 	- If using as module instead of hack, replace ref to jQuery with local copy or in-house parser
 	- If using as module instead of hack, consider replacing jsdom altogether; sux memory
 
@@ -75,8 +76,8 @@ okToProceedWithLid(lid,skipExistingLids,function(err,goodToGo,reason){
 
 					entry['Name'] = window.$('#name-container .full-name:eq(0)').text().trim();
 					entry['Roles'] = null; // #manual
-					entry['Email'] = null; // #manual
-					entry['Email'] = null; // #manual
+					entry['Email'] = argv.email || null; // #manual
+					entry['Phone'] = argv.phone || null; // #manual
 					entry['LinkedIn Username'] = lid;
 					entry['LinkedIn Image Url'] = window.$('#top-card .profile-picture:first img:first').attr('src')
 					entry['Twitter Username'] = null; // #manual
