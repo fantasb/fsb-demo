@@ -17,7 +17,7 @@ To Do
 
 */
 
-console.log('uncomment `rows = rows.slice(0,60)` before running');process.exit();
+//console.log('uncomment `rows = rows.slice(0,60)` before running');process.exit();
 
 
 var argv = require('minimist')(process.argv.slice(2))
@@ -84,16 +84,22 @@ s.pipe(googleWorksheetRows(argv.worksheet))
 	}
 }))
 .on('end',function(){
-	console.log('------WEFWEF',rows.length,rows[rows.length-1]._lid)
-	//rows = rows.slice(0,60); // #test
+	console.log('------DATA_COLLECTED',rows.length,rows[rows.length-1]._lid)
+	//rows = rows.slice(0,20); // #test
 	var numToGet = rows.length, numGot = 0
-	rows.forEach(function(row,i){
+
+	// instead of spawning all at once, do one at a time to pace ourselves
+	//rows.forEach(spawn)
+
+	function handleNext(){
+		var i = numGot, row = rows[i];
 		var lid = row._lid
 		var args = [__dirname+'/scrape_linkedin_profile.js', lid]
 		if (row.email&&row.email.trim) args.push.apply(args, ['--email',row.email.trim()])
 		if (row.phone&&row.phone.trim) args.push.apply(args, ['--phone',row.phone.trim()])
 		if (i != 0) args.push('-a')
 		if (i == rows.length-1) args.push('-c')
+		console.log('spawning #'+i+' '+lid);
 		ut.spawn('node',args,function(code,stdOut,stdErr){
 			if (code || stdErr) {
 				console.log('fail',row.linkedin,lid,code,stdErr)
@@ -106,9 +112,13 @@ s.pipe(googleWorksheetRows(argv.worksheet))
 				stats.endTime = new Date;
 				stats.runTime = ut.dateDiff(stats.startTime, new Date);
 				console.log('-------END',stats)
+			} else {
+				handleNext();
 			}
 		})
-	})
+	}
+	handleNext()
+
 })
 
 s.write(argv.sheetId);
